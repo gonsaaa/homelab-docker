@@ -1,0 +1,30 @@
+services:
+  filebrowser:
+    image: gtstef/filebrowser:stable
+    container_name: filebrowser-quantum
+    user: "1000:1000"
+    volumes:
+      # Data source directory (files you want to manage)
+      - /nfs/share:/data
+      # FileBrowser Quantum app data (SQLite database, config.yaml, cache)
+      - /nfs/share/data/filebrowser-quantum:/home/filebrowser/data
+    environment:
+      - FILEBROWSER_BASEURL=/filebrowser
+    restart: always
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.filebrowser.rule=Host(`filebrowser.gonsa.org`)"
+      - "traefik.http.routers.filebrowser.entrypoints=https"
+      - "traefik.http.routers.filebrowser.tls=true"
+      - "traefik.http.routers.filebrowser.tls.certresolver=cloudflare"
+      # Quantum listens on port 80 internally by default (changed from 8080)
+      - "traefik.http.services.filebrowser.loadbalancer.server.port=80"
+      - "traefik.http.routers.filebrowser.middlewares=authentik@file"
+
+    networks:
+      - traefik-net
+
+networks:
+  traefik-net:
+    external: true
