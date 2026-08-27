@@ -5,7 +5,7 @@ services:
     restart: unless-stopped
 
     environment:
-      APP_URL: "https://anchor.gonsa.org"
+      APP_URL=https://anchor.gonsa.org
 
     volumes:
       - /nfs/share/data/anchor:/data
