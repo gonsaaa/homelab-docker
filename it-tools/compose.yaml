@@ -1,0 +1,43 @@
+services:
+    corentinth:
+        image: 'ghcr.io/corentinth/it-tools:latest'
+        container_name: it-tools
+        ports:
+            - '8077:80'
+    #    network_mode: bridge
+        restart: unless-stopped
+        volumes:
+            - /nfs/share/data/it-tools:/it-tools
+        security_opt:
+          - no-new-privileges:true
+        labels:
+          - "traefik.enable=true"
+          # Local domain router (self-signed HTTPS)
+          - "traefik.http.routers.it-tools-local.rule=Host(`it-tools.home`)"
+          - "traefik.http.routers.it-tools-local.entrypoints=https"
+          - "traefik.http.routers.it-tools-local.tls=true"
+          # Public domain HTTPS router (Let's Encrypt via Cloudflare)
+          - "traefik.http.routers.it-tools.rule=Host(`it-tools.gonsa.org`)"
+          - "traefik.http.routers.it-tools.entrypoints=https"
+          - "traefik.http.routers.it-tools.tls=true"
+          - "traefik.http.routers.it-tools.tls.certresolver=cloudflare"
+          # HTTP-to-HTTPS redirect for public domain if not using CF Tunnel
+          - "traefik.http.routers.it-tools-http.rule=Host(`it-tools.gonsa.org`)"
+          - "traefik.http.routers.it-tools-http.entrypoints=http"
+          - "traefik.http.routers.it-tools-http.middlewares=it-tools-https-redirect"
+          # Define the middleware for redirect
+          - "traefik.http.middlewares.it-tools-https-redirect.redirectscheme.scheme=https"
+          # Shared service definition
+          - "traefik.http.services.it-tools.loadbalancer.server.port=80"
+          - "traefik.http.routers.it-tools.middlewares=authentik@file"
+          
+          # 🔐 Basic Auth
+          #- "traefik.http.routers.it-tools.middlewares=it-tools-auth"
+          #- "traefik.http.middlewares.it-tools-auth.basicauth.users=${TRAEFIK_AUTH_CREDENTIALS}"
+
+        networks:
+          - traefik-net
+
+networks:
+  traefik-net:
+    external: true
