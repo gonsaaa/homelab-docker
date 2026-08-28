@@ -1,0 +1,42 @@
+services:
+  omni-tools:
+    image: iib0011/omni-tools:0.6.0
+    container_name: omni-tools
+    #network_mode: bridge
+    restart: unless-stopped
+ #   ports:
+ #     - "8076:80"
+    security_opt:
+      - no-new-privileges:true
+
+    labels:
+      - "traefik.enable=true"
+      #Local (add in pi-hole)
+      - "traefik.http.routers.omni-tools-home.rule=Host(`omni-tools.home.gonsa.org`)"
+      - "traefik.http.routers.omni-tools-home.entrypoints=https"
+      - "traefik.http.routers.omni-tools-home.tls.certresolver=cloudflare"
+    # Public domain HTTPS router (Let's Encrypt via Cloudflare)
+      - "traefik.http.routers.omni-tools.rule=Host(`omni-tools.gonsa.org`)"
+      - "traefik.http.routers.omni-tools.entrypoints=https"
+      - "traefik.http.routers.omni-tools.tls=true"
+      - "traefik.http.routers.omni-tools.tls.certresolver=cloudflare"
+    # HTTP-to-HTTPS redirect
+      - "traefik.http.routers.omni-tools-http.rule=Host(`omni-tools.gonsa.org`)"
+      - "traefik.http.routers.omni-tools-http.entrypoints=http"
+      - "traefik.http.routers.omni-tools-http.middlewares=omni-tools-https-redirect"
+    # Define the middleware for redirect
+      - "traefik.http.middlewares.omni-tools-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.omni-tools.middlewares=authentik@file"
+    # Shared service definition
+      - "traefik.http.services.omni-tools.loadbalancer.server.port=80"
+
+    # 🔐 Basic Auth
+    #  - "traefik.http.routers.omni-tools-public.middlewares=omni-tools-public-auth"
+    #  - "traefik.http.middlewares.omni-tools-public-auth.basicauth.users=${TRAEFIK_AUTH_CREDENTIALS}"
+
+    networks:
+      - traefik-net
+
+networks:
+  traefik-net:
+    external: true
