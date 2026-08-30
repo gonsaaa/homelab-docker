@@ -1,6 +1,6 @@
 services:
   termix:
-    image: ghcr.io/lukegus/termix:latest
+    image: ghcr.io/lukegus/termix:2.7.1
     container_name: termix
     restart: unless-stopped
     expose:
@@ -37,7 +37,7 @@ services:
       - "traefik.http.routers.termix-http.middlewares=redirect-to-https"
 
   guacd:
-    image: guacamole/guacd:latest
+    image: guacamole/guacd:1.6.0
     container_name: guacd
     restart: unless-stopped
     networks:
