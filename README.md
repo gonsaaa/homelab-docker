@@ -1,4 +1,4 @@
-# Gonçalo Oliveira 👋
+# Gonçalo Oliveira
 
 Systems Engineer focused on **Linux**, **Infrastructure as Code** and **DevOps**.
 Currently building things in my Homelab while learning a bit of everything on the way.
