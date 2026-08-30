@@ -1,0 +1,31 @@
+services:
+  aiostreams:
+    image: ghcr.io/viren070/aiostreams:latest
+    container_name: aiostreams
+    restart: unless-stopped
+  #  ports:
+  #    - 3009:3009
+    
+    volumes:
+      - /nfs/share/data/aiostreams/data:/app/data
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.aiostreams.rule=Host(`aiostreams.gonsa.org`)"
+      - "traefik.http.routers.aiostreams.entrypoints=https"
+      - "traefik.http.routers.aiostreams.tls.certresolver=cloudflare"
+#      # HTTP redirect to HTTPS
+      - "traefik.http.routers.aiostreams-http.entrypoints=http"
+      - "traefik.http.routers.aiostreams-http.rule=Host(`aiostreams.gonsa.org`)"
+      - "traefik.http.routers.aiostreams-http.middlewares=redirect-to-https"
+#       Ports
+      - "traefik.http.services.aiostreams.loadbalancer.server.port=3000"
+#      # Crowdsec-bouncer and Rate-Limit
+#      - "traefik.http.routers.aiostreams.middlewares=secured@file"
+
+    networks:
+      - traefik-net
+#
+networks:
+  traefik-net:
+    external: true
