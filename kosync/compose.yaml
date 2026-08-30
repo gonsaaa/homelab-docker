@@ -1,0 +1,32 @@
+services:
+    kosync:
+        image: koreader/kosync:v2.1.1
+        container_name: kosync
+       # restart: unless-stopped
+        volumes:
+            - /nfs/share/data/kosync/data/redis:/var/lib/redis
+            - /nfs/share/data/kosync/logs/redis:/var/log/redis
+            - /nfs/share/data/kosync/logs/app:/app/koreader-sync-server/logs
+       # ports:
+       #     - '7200:7200'
+
+        labels:
+          - "traefik.enable=true"
+          - "traefik.http.routers.kosync.rule=Host(`kosync.gonsa.org`)"
+          - "traefik.http.routers.kosync.entrypoints=https"
+          - "traefik.http.routers.kosync.tls.certresolver=cloudflare"
+          # HTTP redirect to HTTPS
+          - "traefik.http.routers.kosync-http.entrypoints=http"
+          - "traefik.http.routers.kosync-http.rule=Host(`kosync.gonsa.org`)"
+          - "traefik.http.routers.kosync-http.middlewares=redirect-to-https"
+          # Ports
+          - "traefik.http.services.kosync.loadbalancer.server.port=17200"    
+          # Crowdsec-bouncer and Rate-Limit
+          - "traefik.http.routers.kosync.middlewares=secured@file"
+
+        networks:
+          - traefik-net
+
+networks:
+  traefik-net:
+    external: true
