@@ -1,0 +1,50 @@
+services:
+  termix:
+    image: ghcr.io/lukegus/termix:latest
+    container_name: termix
+    restart: unless-stopped
+    expose:
+      - "8080"
+    volumes:
+      - /nfs/share/data/termix:/app/data
+    environment:
+      PORT: "8080"
+    depends_on:
+      - guacd
+    networks:
+      - termix-net
+      - traefik-net
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik-net"
+      - "traefik.http.services.termix.loadbalancer.server.port=8080"
+
+      # termix - Local only (no auth)
+      - "traefik.http.routers.termix-home.rule=Host(`termix.home.gonsa.org`)"
+      - "traefik.http.routers.termix-home.entrypoints=https"
+      - "traefik.http.routers.termix-home.tls.certresolver=cloudflare"
+      - "traefik.http.routers.termix-home.service=termix"
+
+      # termix - External (with auth)
+      - "traefik.http.routers.termix.rule=Host(`termix.gonsa.org`)"
+      - "traefik.http.routers.termix.entrypoints=https"
+      - "traefik.http.routers.termix.tls.certresolver=cloudflare"
+      - "traefik.http.routers.termix.service=termix"
+
+      # HTTP redirect
+      - "traefik.http.routers.termix-http.entrypoints=http"
+      - "traefik.http.routers.termix-http.rule=Host(`termix.gonsa.org`) || Host(`termix.home.gonsa.org`)"
+      - "traefik.http.routers.termix-http.middlewares=redirect-to-https"
+
+  guacd:
+    image: guacamole/guacd:latest
+    container_name: guacd
+    restart: unless-stopped
+    networks:
+      - termix-net
+
+networks:
+  termix-net:
+    driver: bridge
+  traefik-net:
+    external: true
