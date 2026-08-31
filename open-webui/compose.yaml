@@ -1,6 +1,6 @@
 services:
   ollama:
-    image: ollama/ollama:0.33.2
+    image: ollama/ollama:v0.33.2
     container_name: ollama
    # ports:
    #   - "11434:11434"
@@ -28,7 +28,7 @@ services:
       - "traefik.http.services.ollama.loadbalancer.server.port=11434"
 
   openwebui:
-    image: ghcr.io/open-webui/open-webui:0.11.2-cuda
+    image: ghcr.io/open-webui/open-webui:v0.11.1-cuda
     container_name: open-webui
   #  ports:
   #    - "3006:8080"
@@ -82,7 +82,7 @@ services:
       - "traefik.http.services.openwebui.loadbalancer.server.port=8080"
 
   litellm:
-    image: ghcr.io/berriai/litellm:1.98.0
+    image: ghcr.io/berriai/litellm:v1.98.0
     container_name: litellm
     command:
       - --config
