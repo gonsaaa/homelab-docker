@@ -1,0 +1,41 @@
+services:  
+  docling:  
+    image: quay.io/docling-project/docling-serve:2.124.0  
+    container_name: docling  
+    restart: unless-stopped  
+    networks:  
+      - traefik-net  
+    volumes:  
+      - /nfs/share/data/docling:/data  
+    environment:  
+      - DOCLING_SERVE_ENABLE_UI=true  
+      - NVIDIA_VISIBLE_DEVICES=all  
+    mem_limit: 4g  
+    memswap_limit: 6g  
+    deploy:  
+      resources:  
+        reservations:  
+          devices:  
+            - driver: nvidia  
+              count: 1  
+              capabilities: [gpu]  
+    labels:
+      - "traefik.enable=true"
+      # HTTPS router
+      - "traefik.http.routers.docling.rule=Host(`docling.gonsa.org`)"
+      - "traefik.http.routers.docling.entrypoints=https"
+      - "traefik.http.routers.docling.tls=true"                         
+      - "traefik.http.routers.docling.service=docling"                  
+      # HTTP router (redirect only)
+      - "traefik.http.routers.docling-http.rule=Host(`docling.gonsa.org`)"
+      - "traefik.http.routers.docling-http.entrypoints=http"
+      - "traefik.http.routers.docling-http.middlewares=docling-https-redirect" 
+      # Middleware scoped to this service
+      - "traefik.http.middlewares.docling-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.docling-https-redirect.redirectscheme.permanent=true"
+      # Service
+      - "traefik.http.services.docling.loadbalancer.server.port=5001"
+
+networks:  
+  traefik-net:  
+    external: true
