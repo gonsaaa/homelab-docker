@@ -1,0 +1,48 @@
+services:
+  homepage:
+    image: ghcr.io/gethomepage/homepage:latest
+    container_name: homepage-filipa
+   # ports:
+   #   - 3000:3000
+    environment:
+      - TZ=Europe/Lisbon
+      #- HOMEPAGE_ALLOWED_HOSTS=vmdocker:3000
+      - HOMEPAGE_ALLOWED_HOSTS=*
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - /nfs/share/data/homepage_filipa/config:/app/config
+      - /nfs/share/data/homepage_filipa/app/public/icons:/app/public/icons
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+
+      # Local HTTPS – NO auth
+      - "traefik.http.routers.homepage-filipa-home.rule=Host(`filipa.gonsa.org`)"
+      - "traefik.http.routers.homepage-filipa-home.entrypoints=https"
+      - "traefik.http.routers.homepage-filipa-home.tls.certresolver=cloudflare"
+      - "traefik.http.routers.homepage-filipa-home.priority=200"
+      - "traefik.http.routers.homepage-filipa-home.middlewares="
+      - "traefik.http.services.homepage-filipa-home.loadbalancer.server.port=3000"
+
+      # Public + Authentik
+      - "traefik.http.routers.homepage-filipa.rule=Host(`homepagefilipa.gonsa.org`)"
+      - "traefik.http.routers.homepage-filipa.entrypoints=https"
+      - "traefik.http.routers.homepage-filipa.tls.certresolver=cloudflare"
+      - "traefik.http.routers.homepage-filipa.middlewares=authentik@file"
+      - "traefik.http.routers.homepage-filipa.priority=50"
+    
+      # HTTP → HTTPS only for public host
+      - "traefik.http.routers.homepage-filipa-http.rule=Host(`homepagefilipa.gonsa.org`)"
+      - "traefik.http.routers.homepage-filipa-http.entrypoints=http"
+      - "traefik.http.routers.homepage-filipa-http.middlewares=redirect-to-https"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+
+
+    networks:
+      - traefik-net
+
+networks:
+  traefik-net:
+    external: true
