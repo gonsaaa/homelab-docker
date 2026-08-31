@@ -1,0 +1,109 @@
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+   # ports:
+   #   - "11434:11434"
+    environment:
+      - OLLAMA_MAX_LOADED_MODELS=2
+      - OLLAMA_KEEP_ALIVE=5m
+      - OLLAMA_FLASH_ATTENTION=1
+    networks:
+      - traefik-net
+    volumes:
+      - /home/gonsa/ollama:/root/.ollama
+    mem_limit: 6g
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+    restart: always
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ollama.rule=Host(`ollama.gonsa.org`)"
+      - "traefik.http.routers.ollama.entrypoints=https"
+      - "traefik.http.routers.ollama.tls.certresolver=cloudflare"
+      - "traefik.http.services.ollama.loadbalancer.server.port=11434"
+
+  openwebui:
+    image: ghcr.io/open-webui/open-webui:cuda
+    container_name: open-webui
+  #  ports:
+  #    - "3006:8080"
+    networks:
+      - traefik-net
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - LANG=en_US.UTF-8
+    mem_limit: 4g
+  #  extra_hosts:
+  #    - vmdocker:host-gateway
+    volumes:
+      - /home/gonsa/open-webui:/app/backend/data
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+    restart: always
+
+    labels:
+      - "traefik.enable=true"
+      # OpenWebUI - Local only (no auth)
+      - "traefik.http.routers.openwebui-home.rule=Host(`openwebui.home.gonsa.org`)"
+      - "traefik.http.routers.openwebui-home.entrypoints=https"
+      - "traefik.http.routers.openwebui-home.tls.certresolver=cloudflare"
+
+      # OpenWebUI - External (with auth)
+      - "traefik.http.routers.openwebui.rule=Host(`openwebui.gonsa.org`)"
+      - "traefik.http.routers.openwebui.entrypoints=https"
+      - "traefik.http.routers.openwebui.tls.certresolver=cloudflare"
+      - "traefik.http.routers.openwebui.middlewares=authentik@file"
+
+      # Weather - External (add auth if needed)
+      - "traefik.http.routers.weather.rule=Host(`weather.gonsa.org`)"
+      - "traefik.http.routers.weather.entrypoints=https"
+      - "traefik.http.routers.weather.tls.certresolver=cloudflare"
+      - "traefik.http.routers.weather.middlewares=authentik@file"
+
+      # HTTP redirects for both domains
+      - "traefik.http.routers.openwebui-http.entrypoints=http"
+      - "traefik.http.routers.openwebui-http.rule=Host(`openwebui.gonsa.org`)"
+      - "traefik.http.routers.openwebui-http.middlewares=redirect-to-https"
+
+      - "traefik.http.routers.weather-http.entrypoints=http"
+      - "traefik.http.routers.weather-http.rule=Host(`weather.gonsa.org`)"
+      - "traefik.http.routers.weather-http.middlewares=redirect-to-https"
+
+      # Shared middleware and service
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+      - "traefik.http.services.openwebui.loadbalancer.server.port=8080"
+
+  litellm:
+    image: ghcr.io/berriai/litellm:main-latest
+    container_name: litellm
+    command:
+      - --config
+      - /app/config.yaml
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+    volumes:
+      - /home/gonsa/litellm/config.yaml:/app/config.yaml:ro
+    networks:
+      - traefik-net
+    restart: always
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.litellm.rule=Host(`litellm.gonsa.org`)"
+      - "traefik.http.routers.litellm.entrypoints=https"
+      - "traefik.http.routers.litellm.tls.certresolver=cloudflare"
+      - "traefik.http.services.litellm.loadbalancer.server.port=4000"
+
+networks:
+  traefik-net:
+    external: true
