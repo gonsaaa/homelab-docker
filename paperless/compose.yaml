@@ -1,0 +1,174 @@
+networks:
+  traefik-net:
+      external: true
+volumes:
+  proton-bridge: {}
+  
+services:
+  broker:
+    image: docker.io/library/redis:7
+    container_name: paperless-broker
+    restart: unless-stopped
+    networks:
+      - traefik-net
+
+    volumes:
+      - /nfs/share/data/paperless-ngx/redisdata:/data
+
+  db:
+    image: docker.io/library/postgres:16
+    container_name: paperless-db
+    restart: unless-stopped
+    networks:
+      - traefik-net
+    volumes:
+      - /nfs/share/data/paperless-ngx/pgdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: paperless
+      POSTGRES_USER: paperless
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+  webserver:
+    image: ghcr.io/paperless-ngx/paperless-ngx:latest
+    container_name: paperless-server
+    restart: unless-stopped
+    networks:
+      - traefik-net
+    depends_on:
+      - db
+      - broker
+#    ports:
+#      - "8010:8000"
+    volumes:
+      - /nfs/share/data/paperless-ngx/data:/usr/src/paperless/data
+      - /nfs/share/data/paperless-ngx/media:/usr/src/paperless/media
+      - /nfs/share/data/paperless-ngx/export:/usr/src/paperless/export
+      - /nfs/share/data/paperless-ngx/consume:/usr/src/paperless/consume
+    environment:
+      PAPERLESS_SECRET_KEY: ${PAPERLESS_SECRET_KEY}
+      PAPERLESS_REDIS: redis://broker:6379
+      PAPERLESS_DBHOST: db
+      PAPERLESS_OCR_USER_ARGS: '{"invalidate_digital_signatures": true}'
+      PAPERLESS_URL: https://paperless.gonsa.org
+      PAPERLESS_ALLOWED_HOSTS: paperless.gonsa.org,paperless.home.gonsa.org,paperless-server
+      PAPERLESS_CSRF_TRUSTED_ORIGINS: https://paperless.gonsa.org,https://paperless.home.gonsa.org
+      TZ: Europe/Lisbon
+      #tuning after debian 13
+      # Celery tuning (reduce forking & memory churn)
+      CELERY_WORKER_CONCURRENCY: "2"     # cap workers
+      CELERY_WORKER_POOL: "threads"      # use threads pool instead of prefork
+      CELERY_WORKER_MAX_TASKS_PER_CHILD: "20"  # recycle to avoid leaks
+      CELERY_BROKER_HEARTBEAT: "0"
+      CELERY_BROKER_POOL_LIMIT: "2"
+      # (Paperless already forces OMP_THREAD_LIMIT=1 internally, but safe to pin too)
+      OMP_NUM_THREADS: "1"
+      PAPERLESS_EMAIL_TASK_CRON: "*/5 * * * *"  # Check every 5 minutes
+      PAPERLESS_EMAIL_TASK_DELETE_MAIL: false    # Don't delete emails
+# The UID and GID of the user used to run paperless in the container. Set this
+# to your UID and GID on the host so that you have write access to the
+# consumption directory.
+      USERMAP_UID: 1000
+      USERMAP_GID: 100
+# Additional languages to install for text recognition, separated by a
+# whitespace. Note that this is
+# different from PAPERLESS_OCR_LANGUAGE (default=eng), which defines the
+# language used for OCR.
+# The container installs English, German, Italian, Spanish and French by
+# default.
+# See https://packages.debian.org/search?keywords=tesseract-ocr-&searchon=names&suite=buster
+# for available languages.
+      PAPERLESS_OCR_LANGUAGES: por eng
+# Adjust this key if you plan to make paperless available publicly. It should
+# be a very long sequence of random characters. You don't need to remember it.
+      #PAPERLESS_SECRET_KEY: change-me
+# Use this variable to set a timezone for the Paperless Docker containers. If not specified, defaults to UTC.
+      PAPERLESS_TIME_ZONE: Europe/Lisbon
+# The default language to use for OCR. Set this to the language most of your
+# documents are written in.
+      PAPERLESS_OCR_LANGUAGE: por
+      PAPERLESS_REDIRECT_LOGIN_TO_SSO: false  # Don't auto-redirect to Authentik
+      PAPERLESS_DISABLE_REGULAR_LOGIN: false   # Allow local username/password
+      PAPERLESS_ADMIN_USER: gonsa
+      PAPERLESS_ADMIN_PASSWORD: ${PAPERLESS_ADMIN_PASSWORD}
+      PAPERLESS_APPS: allauth.socialaccount.providers.openid_connect
+      PAPERLESS_SOCIALACCOUNT_PROVIDERS: >
+          {
+            "openid_connect": {
+              "APPS": [
+                {
+                  "provider_id": "authentik",
+                  "name": "Authentik",
+                  "client_id": "${PAPERLESS_OIDC_CLIENT_ID}",
+                  "secret": "${PAPERLESS_OIDC_CLIENT_SECRET}": {
+                    "server_url": "https://authentik.gonsa.org/application/o/paperless/.well-known/openid-configuration"
+                  }
+                }
+              ],
+              "OAUTH_PKCE_ENABLED": "True"
+            }
+          }
+
+    labels:
+      - "traefik.enable=true"
+      #Home
+      - "traefik.http.routers.paperless-home.rule=Host(`paperless.home.gonsa.org`)"
+      - "traefik.http.routers.paperless-home.entrypoints=https"
+      - "traefik.http.routers.paperless-home.tls.certresolver=cloudflare"
+      
+      - "traefik.http.routers.paperless.rule=Host(`paperless.gonsa.org`)"
+      - "traefik.http.routers.paperless.entrypoints=https"
+      - "traefik.http.routers.paperless.tls.certresolver=cloudflare"
+    # HTTP-to-HTTPS redirect
+      - "traefik.http.routers.paperless-http.rule=Host(`paperless.gonsa.org`)"
+      - "traefik.http.routers.paperless-http.entrypoints=http"
+      - "traefik.http.routers.paperless-http.middlewares=redirect-to-https"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+
+      - "traefik.http.routers.paperless.middlewares=force-sso"
+
+      # Middleware definition
+      - "traefik.http.middlewares.force-sso.redirectregex.regex=^https://paperless.gonsa.org/accounts/login/(.*)"
+      - "traefik.http.middlewares.force-sso.redirectregex.replacement=https://paperless.gonsa.org/accounts/oidc/authentik/login/"
+      
+      - "traefik.http.services.paperless.loadbalancer.server.port=8000"
+
+  protonmail-bridge:
+    image: ghcr.io/videocurio/proton-mail-bridge:latest
+    container_name: proton-bridge
+#    ports:
+#      - 1025:25/tcp
+#      - 1143:143/tcp
+    restart: unless-stopped
+    networks:
+      - traefik-net
+    
+    volumes:
+      - /nfs/share/data/proton-bridge:/root
+
+  paperless-ai:
+    image: clusterzx/paperless-ai
+    container_name: paperless-ai
+    networks:
+      - traefik-net
+    restart: unless-stopped
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges=true
+    environment:
+      - PAPERLESS_AI_PORT=3000
+      - RAG_SERVICE_URL=http://paperless-server:8000
+      - RAG_SERVICE_ENABLED=true
+      - PAPERLESS_API_URL=http://paperless-server:8000/api
+      - PAPERLESS_API_TOKEN=${PAPERLESS_API_TOKEN}
+   # ports:
+   #   - "3000:3000"
+    volumes:
+      - /nfs/share/data/paperless-ngx/paperless-ai:/app/data
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.paperless-ai.rule=Host(`paperless-ai.gonsa.org`)"
+      - "traefik.http.routers.paperless-ai.entrypoints=https"
+      - "traefik.http.routers.paperless-ai.tls.certresolver=cloudflare"
+      - "traefik.http.services.paperless-ai.loadbalancer.server.port=3000"
