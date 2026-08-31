@@ -91,22 +91,7 @@ services:
       PAPERLESS_ADMIN_USER: gonsa
       PAPERLESS_ADMIN_PASSWORD: ${PAPERLESS_ADMIN_PASSWORD}
       PAPERLESS_APPS: allauth.socialaccount.providers.openid_connect
-      PAPERLESS_SOCIALACCOUNT_PROVIDERS: >
-          {
-            "openid_connect": {
-              "APPS": [
-                {
-                  "provider_id": "authentik",
-                  "name": "Authentik",
-                  "client_id": "${PAPERLESS_OIDC_CLIENT_ID}",
-                  "secret": "${PAPERLESS_OIDC_CLIENT_SECRET}": {
-                    "server_url": "https://authentik.gonsa.org/application/o/paperless/.well-known/openid-configuration"
-                  }
-                }
-              ],
-              "OAUTH_PKCE_ENABLED": "True"
-            }
-          }
+      PAPERLESS_SOCIALACCOUNT_PROVIDERS: ${PAPERLESS_SOCIALACCOUNT_PROVIDERS}
 
     labels:
       - "traefik.enable=true"
