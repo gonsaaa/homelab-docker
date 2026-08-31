@@ -135,6 +135,10 @@ services:
     container_name: paperless-ai
     networks:
       - traefik-net
+      
+    depends_on:
+    - webserver
+    
     restart: unless-stopped
     cap_drop:
       - ALL
@@ -142,9 +146,9 @@ services:
       - no-new-privileges=true
     environment:
       - PAPERLESS_AI_PORT=3000
-      - RAG_SERVICE_URL=http://paperless-server:8000
+      - RAG_SERVICE_URL=http://webserver:8000
       - RAG_SERVICE_ENABLED=true
-      - PAPERLESS_API_URL=http://paperless-server:8000/api
+      - PAPERLESS_API_URL=http://webserver:8000/api
       - PAPERLESS_API_TOKEN=${PAPERLESS_API_TOKEN}
    # ports:
    #   - "3000:3000"
