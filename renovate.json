@@ -1,0 +1,68 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+
+  "dependencyDashboard": true,
+  "dependencyDashboardTitle": "Renovate Dashboard",
+
+  "assignees": ["gonsa"],
+  "labels": ["renovate"],
+
+  "configMigration": true,
+  "prHourlyLimit": 0,
+
+  "prBodyTemplate": "{{{table}}}\n\n{{{changelogs}}}",
+
+  "docker-compose": {
+    "hostRules": [
+      {
+        "matchHost": "docker.io",
+        "concurrentRequestLimit": 2
+      }
+    ]
+  },
+
+  "packageRules": [
+    {
+      "description": "Show stack name for Docker Compose updates",
+      "matchManagers": ["docker-compose"],
+      "commitMessagePrefix": "[{{{parentDir}}}]",
+      "prBodyColumns": [
+        "Stack",
+        "Package",
+        "Update",
+        "Change"
+      ],
+      "prBodyDefinitions": {
+        "Stack": "`{{{parentDir}}}`"
+      }
+    },
+    
+    {
+      "description": "Ignore PostgreSQL major upgrades",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": [
+        "docker.io/library/postgres",
+        "postgres"
+      ],
+      "matchUpdateTypes": ["major"],
+      "enabled": false
+    },
+
+    {
+      "description": "Ignore Redis major upgrades",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": [
+        "docker.io/library/redis",
+        "redis"
+      ],
+      "matchUpdateTypes": ["major"],
+      "enabled": false
+    },
+    
+    {
+      "matchPackageNames": ["gtstef/filebrowser"],
+      "changelogUrl": "https://github.com/gtsteffaniak/filebrowser/releases"
+    }
+  ]
+}
