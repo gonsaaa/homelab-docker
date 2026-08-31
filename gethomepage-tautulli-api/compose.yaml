@@ -1,6 +1,6 @@
 services:
   tautulli-manager:
-    image: ghcr.io/10mfox/gethomepage-tautulli-api:latest
+    image: ghcr.io/10mfox/gethomepage-tautulli-api:sha256-22337c7d451cbb647e72c7b040ccaaf2db929417aafa8f1676d578a4b7352414.sig
     container_name: tautulli-api-manager
     environment:
       - TAUTULLI_CUSTOM_PORT=3010
