@@ -28,7 +28,7 @@ services:
       - "traefik.http.services.ollama.loadbalancer.server.port=11434"
 
   openwebui:
-    image: ghcr.io/open-webui/open-webui:v0.11.2-cuda
+    image: ghcr.io/open-webui/open-webui:0.11.2-cuda
     container_name: open-webui
   #  ports:
   #    - "3006:8080"
