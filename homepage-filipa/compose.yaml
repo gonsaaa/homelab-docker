@@ -18,7 +18,7 @@ services:
     labels:
       - "traefik.enable=true"
 
-      # Local HTTPS – NO auth
+      # Local HTTPS  NO auth
       - "traefik.http.routers.homepage-filipa-home.rule=Host(`filipa.gonsa.org`)"
       - "traefik.http.routers.homepage-filipa-home.entrypoints=https"
       - "traefik.http.routers.homepage-filipa-home.tls.certresolver=cloudflare"
