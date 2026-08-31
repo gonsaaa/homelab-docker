@@ -1,0 +1,13 @@
+services:
+  tautulli-manager:
+    image: ghcr.io/10mfox/gethomepage-tautulli-api:latest
+    container_name: tautulli-api-manager
+    environment:
+      - TAUTULLI_CUSTOM_PORT=3010
+      - PUID=1000   # Your user ID
+      - PGID=1000   # Your group ID
+    ports:
+      - "3010:3010"
+    volumes:
+      - /nfs/share/data/gethomepage-tautulli-api/config:/app/config
+    restart: unless-stopped
