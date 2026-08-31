@@ -1,6 +1,6 @@
 services:  
   docling:  
-    image: quay.io/docling-project/docling-serve:2.123.1  
+    image: quay.io/docling-project/docling-serve:v2.123.1  
     container_name: docling  
     restart: unless-stopped  
     networks:  
