@@ -17,7 +17,7 @@ services:
 
     labels:
       - "traefik.enable=true"
-      - "traefik.http.services.ytptube.loadbalancer.server.port=8082"
+      - "traefik.http.services.ytptube.loadbalancer.server.port=8081"
       
       # myservice - Local
       - "traefik.http.routers.ytptube-home.rule=Host(`ytptube.home.gonsa.org`)"
