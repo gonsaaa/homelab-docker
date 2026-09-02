@@ -142,6 +142,9 @@ services:
       PUID: ${PUID}
       PGID: ${PGID}
       UMASK: ${UMASK}
+      
+    env_file:
+      - stack.env
 
     volumes:
       - /nfs/share/data/downloads/nicotineplus:/downloads
