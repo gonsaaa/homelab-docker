@@ -141,7 +141,6 @@ services:
       PASSW: ${PASSW}
       PUID: ${PUID}
       PGID: ${PGID}
-      UMASK: ${UMASK}
       
     env_file:
       - stack.env
