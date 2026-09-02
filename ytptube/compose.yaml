@@ -23,7 +23,7 @@ services:
       - "traefik.http.routers.ytptube-home.rule=Host(`ytptube.home.gonsa.org`)"
       - "traefik.http.routers.ytptube-home.entrypoints=https"
       - "traefik.http.routers.ytptube-home.tls.certresolver=cloudflare"
-      - "traefik.http.routers.ytptube-home.service=myservice"
+      - "traefik.http.routers.ytptube-home.service=ytptube"
 
       # myservice - External
       - "traefik.http.routers.ytptube.rule=Host(`ytptube.gonsa.org`)"
