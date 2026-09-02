@@ -1,0 +1,62 @@
+services:
+  wireguard:
+    image: lscr.io/linuxserver/wireguard:1.0.20260223-r0-ls120
+    container_name: wireguard
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    networks:
+      - traefik-net
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Lisbon
+    volumes:
+      - /nfs/share/data/wireguard/config:/config
+      - /lib/modules:/lib/modules
+
+      - /nfs/share/data/wireguard/custom-cont-init.d:/custom-cont-init.d:ro
+      - /nfs/share/data/proton-port-forward:/data
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+      - net.ipv6.conf.all.disable_ipv6=1
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    labels:
+      # qBittorrent
+      - traefik.enable=true
+      - traefik.docker.network=traefik-net
+      - traefik.http.routers.qbit.rule=Host(`qbit.home.gonsa.org`)
+      - traefik.http.routers.qbit.entrypoints=https
+      - traefik.http.routers.qbit.tls=true
+      - traefik.http.routers.qbit.tls.certresolver=cloudflare
+      - traefik.http.routers.qbit.service=qbit
+      - traefik.http.services.qbit.loadbalancer.server.port=8081
+      - traefik.http.routers.qbit-http.rule=Host(`qbit.home.gonsa.org`)
+      - traefik.http.routers.qbit-http.entrypoints=http
+      - traefik.http.routers.qbit-http.middlewares=qbit-https-redirect
+      - traefik.http.middlewares.qbit-https-redirect.redirectscheme.scheme=https
+      # Nicotine - Home
+      - traefik.http.routers.nicotine-home.rule=Host(`nicotine.home.gonsa.org`)
+      - traefik.http.routers.nicotine-home.entrypoints=https
+      - traefik.http.routers.nicotine-home.tls=true
+      - traefik.http.routers.nicotine-home.tls.certresolver=cloudflare
+      - traefik.http.routers.nicotine-home.service=nicotine
+      - traefik.http.services.nicotine.loadbalancer.server.port=6565
+      # Nicotine - Public
+      - traefik.http.routers.nicotine.rule=Host(`nicotine.gonsa.org`)
+      - traefik.http.routers.nicotine.entrypoints=https
+      - traefik.http.routers.nicotine.tls=true
+      - traefik.http.routers.nicotine.tls.certresolver=cloudflare
+      - traefik.http.routers.nicotine.service=nicotine
+      - traefik.http.routers.nicotine.middlewares=authentik@file
+      # Nicotine - HTTP redirect
+      - traefik.http.routers.nicotine-http.rule=Host(`nicotine.gonsa.org`)
+      - traefik.http.routers.nicotine-http.entrypoints=http
+      - traefik.http.routers.nicotine-http.middlewares=nicotine-https-redirect
+      - traefik.http.middlewares.nicotine-https-redirect.redirectscheme.scheme=https
+    
+networks:
+  traefik-net:
+    external: true
