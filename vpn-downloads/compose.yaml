@@ -136,14 +136,7 @@ services:
       NOTIFY_TITLE: "False"
       NOTIFY_PM: "False"
       NOTIFY_CHATROOM: "False"
-      NOTIFY_MENTION: "False"
-      LOGIN: ${LOGIN}
-      PASSW: ${PASSW}
-      PUID: ${PUID}
-      PGID: ${PGID}
-      
-    env_file:
-      - stack.env
+      NOTIFY_MENTION: "False"   
 
     volumes:
       - /nfs/share/data/downloads/nicotineplus:/downloads
