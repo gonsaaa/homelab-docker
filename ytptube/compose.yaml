@@ -1,7 +1,7 @@
 services:
   ytptube:
     user: "${UID:-0}:${UID:-0}" # change this to your user id and group id, for example: "1000:1000"
-    image: ghcr.io/arabcoders/ytptube:2.7.2 
+    image: ghcr.io/arabcoders/ytptube:v2.7.2 
     container_name: ytptube
   #  restart: unless-stopped
     network_mode: bridge
