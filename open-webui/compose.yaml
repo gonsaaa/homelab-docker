@@ -37,6 +37,7 @@ services:
     environment:
       - OLLAMA_BASE_URL=http://ollama:11434
       - LANG=en_US.UTF-8
+      - TZ=Europe/Lisbon
     mem_limit: 4g
   #  extra_hosts:
   #    - vmdocker:host-gateway
@@ -88,6 +89,7 @@ services:
       - --config
       - /app/config.yaml
     environment:
+      - TZ=Europe/Lisbon
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
       - GEMINI_API_KEY=${GEMINI_API_KEY}
