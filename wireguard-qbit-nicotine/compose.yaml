@@ -14,6 +14,7 @@ services:
       PUID: "1000"
       PGID: "1000"
       TZ: Europe/Lisbon
+      QBIT_API_KEY: ${QBIT_API_KEY}
 
     volumes:
       - /nfs/share/data/wireguard/config:/config
