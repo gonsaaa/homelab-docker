@@ -63,12 +63,6 @@
     {
       "matchPackageNames": ["gtstef/filebrowser"],
       "changelogUrl": "https://github.com/gtsteffaniak/filebrowser/releases"
-    },
-    
-    {
-    "matchManagers": ["docker-compose"],
-    "matchPackageNames": ["ghcr.io/open-webui/open-webui"],
-    "pinDigests": true
     }
     
   ]
