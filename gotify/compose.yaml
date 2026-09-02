@@ -1,0 +1,40 @@
+services:
+  gotify:
+    image: gotify/server:3.1.0
+    container_name: gotify
+   # network_mode: bridge
+    ports:
+      - 8084:80
+    environment:
+      GOTIFY_DEFAULTUSER_PASS: 'admin'
+      TZ: Europe/Lisbon
+    volumes:
+      - '/nfs/share/data/gotify:/app/data'
+    restart: unless-stopped
+    security_opt: 
+      - no-new-privileges:true
+      
+    # to run gotify as a dedicated user:
+    # sudo chown -R 1234:1234 ./gotify_data
+    # user: "1234:1234"
+   
+    labels:
+      - "traefik.enable=true"
+    # Public domain HTTPS router (Let's Encrypt via Cloudflare)
+      - "traefik.http.routers.gotify.rule=Host(`gotify.gonsa.org`)"
+      - "traefik.http.routers.gotify.entrypoints=https"
+      - "traefik.http.routers.gotify.tls.certresolver=cloudflare"
+      - "traefik.http.routers.gotify-http.rule=Host(`gotify.gonsa.org`)"
+      - "traefik.http.routers.gotify-http.entrypoints=http"
+      - "traefik.http.routers.gotify-http.middlewares=redirect-to-https"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+    # Shared service definition
+      - "traefik.http.services.gotify.loadbalancer.server.port=80"
+      - "traefik.http.routers.gotify.middlewares=secured@file"
+
+    networks:
+      - traefik-net
+
+networks:
+  traefik-net:
+    external: true
