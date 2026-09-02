@@ -1,0 +1,157 @@
+services:
+  wireguard:
+    image: lscr.io/linuxserver/wireguard:1.0.20260223-r0-ls120
+    container_name: wireguard
+
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+
+    networks:
+      - traefik-net
+
+    environment:
+      PUID: "1000"
+      PGID: "1000"
+      TZ: Europe/Lisbon
+
+    volumes:
+      - /nfs/share/data/wireguard/config:/config
+      - /lib/modules:/lib/modules
+      - /nfs/share/data/wireguard/custom-cont-init.d:/custom-cont-init.d:ro
+      - /nfs/share/data/proton-port-forward:/data
+
+    sysctls:
+      net.ipv4.conf.all.src_valid_mark: "1"
+      net.ipv6.conf.all.disable_ipv6: "1"
+
+    security_opt:
+      - no-new-privileges:true
+
+    restart: unless-stopped
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik-net"
+
+      # ============================================================
+      # qBittorrent - Home
+      # ============================================================
+
+      - "traefik.http.routers.qbit.rule=Host(`qbit.home.gonsa.org`)"
+      - "traefik.http.routers.qbit.entrypoints=https"
+      - "traefik.http.routers.qbit.tls=true"
+      - "traefik.http.routers.qbit.tls.certresolver=cloudflare"
+      - "traefik.http.routers.qbit.service=qbit"
+
+      - "traefik.http.services.qbit.loadbalancer.server.port=8081"
+
+      # HTTP -> HTTPS
+      - "traefik.http.routers.qbit-http.rule=Host(`qbit.home.gonsa.org`)"
+      - "traefik.http.routers.qbit-http.entrypoints=http"
+      - "traefik.http.routers.qbit-http.middlewares=qbit-https-redirect"
+      - "traefik.http.middlewares.qbit-https-redirect.redirectscheme.scheme=https"
+
+      # ============================================================
+      # Nicotine+ - Home
+      # ============================================================
+
+      - "traefik.http.routers.nicotine-home.rule=Host(`nicotine.home.gonsa.org`)"
+      - "traefik.http.routers.nicotine-home.entrypoints=https"
+      - "traefik.http.routers.nicotine-home.tls=true"
+      - "traefik.http.routers.nicotine-home.tls.certresolver=cloudflare"
+      - "traefik.http.routers.nicotine-home.service=nicotine"
+
+      - "traefik.http.services.nicotine.loadbalancer.server.port=6565"
+
+      # ============================================================
+      # Nicotine+ - Public
+      # ============================================================
+
+      - "traefik.http.routers.nicotine.rule=Host(`nicotine.gonsa.org`)"
+      - "traefik.http.routers.nicotine.entrypoints=https"
+      - "traefik.http.routers.nicotine.tls=true"
+      - "traefik.http.routers.nicotine.tls.certresolver=cloudflare"
+      - "traefik.http.routers.nicotine.service=nicotine"
+      - "traefik.http.routers.nicotine.middlewares=authentik@file"
+
+      # HTTP -> HTTPS
+      - "traefik.http.routers.nicotine-http.rule=Host(`nicotine.gonsa.org`)"
+      - "traefik.http.routers.nicotine-http.entrypoints=http"
+      - "traefik.http.routers.nicotine-http.middlewares=nicotine-https-redirect"
+      - "traefik.http.middlewares.nicotine-https-redirect.redirectscheme.scheme=https"
+
+
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:5.2.2_v2.0.13-ls464
+    container_name: qbittorrent
+
+    network_mode: "service:wireguard"
+
+    depends_on:
+      wireguard:
+        condition: service_started
+        restart: true
+
+    security_opt:
+      - no-new-privileges:true
+
+    environment:
+      PUID: "1000"
+      PGID: "1000"
+      UMASK: "022"
+      WEBUI_PORT: "8081"
+      TZ: Europe/Lisbon
+
+    volumes:
+      - /opt/qbittorrent/config:/config
+      - /nfs/share/data/qbittorrent/torrents:/torrents
+      - /nfs/share/data/downloads:/data/downloads
+      - /nfs/share:/share
+
+    restart: unless-stopped
+
+
+  nicotineplus-proper:
+    image: ghcr.io/sirjmann92/nicotineplus-proper:260829
+    container_name: nicotine
+
+    network_mode: "service:wireguard"
+
+    depends_on:
+      wireguard:
+        condition: service_started
+        restart: true
+
+    environment:
+      TZ: Europe/Lisbon
+      LANG: C.UTF-8
+      UMASK: "022"
+      DARKMODE: "True"
+      UPNP: "False"
+      AUTO_CONNECT: "True"
+      TRAY_ICON: "False"
+      NOTIFY_FILE: "False"
+      NOTIFY_FOLDER: "False"
+      NOTIFY_TITLE: "False"
+      NOTIFY_PM: "False"
+      NOTIFY_CHATROOM: "False"
+      NOTIFY_MENTION: "False"
+      LOGIN={$LOGIN}
+      PASSW={$PASSW}
+      PUID={$PUID}
+      PGID={$PGID}
+      UMASK={$022}
+
+    volumes:
+      - /nfs/share/data/downloads/nicotineplus:/downloads
+      - /nfs/share/mp3:/shared
+      - /nfs/share/data/nicotineplus:/config
+      - /nfs/share/data/nicotineplus/data:/data
+
+    restart: unless-stopped
+
+
+networks:
+  traefik-net:
+    external: true
