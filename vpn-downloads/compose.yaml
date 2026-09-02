@@ -137,11 +137,11 @@ services:
       NOTIFY_PM: "False"
       NOTIFY_CHATROOM: "False"
       NOTIFY_MENTION: "False"
-      LOGIN={$LOGIN}
-      PASSW={$PASSW}
-      PUID={$PUID}
-      PGID={$PGID}
-      UMASK={$022}
+      LOGIN: ${LOGIN}
+      PASSW: ${PASSW}
+      PUID: ${PUID}
+      PGID: ${PGID}
+      UMASK: ${022}
 
     volumes:
       - /nfs/share/data/downloads/nicotineplus:/downloads
