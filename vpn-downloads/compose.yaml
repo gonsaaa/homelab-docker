@@ -141,7 +141,7 @@ services:
       PASSW: ${PASSW}
       PUID: ${PUID}
       PGID: ${PGID}
-      UMASK: ${022}
+      UMASK: ${UMASK}
 
     volumes:
       - /nfs/share/data/downloads/nicotineplus:/downloads
