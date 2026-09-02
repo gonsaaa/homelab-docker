@@ -1,0 +1,47 @@
+services:
+  stirling-pdf:
+    image: docker.stirlingpdf.com/stirlingtools/stirling-pdf:2.14.3
+    container_name: stirlingpdf
+    security_opt:
+      - no-new-privileges:true
+  #  ports:
+  #    - '8078:8080'
+    volumes:
+      - /nfs/share/data/stirlingpdf/trainingData:/usr/share/tessdata # Required for extra OCR languages
+      - /nfs/share/data/stirlingpdf/extraConfigs:/configs
+      - /nfs/share/data/stirlingpdf/customFiles:/customFiles/
+      - /nfs/share/data/stirlingpdf/logs:/logs/
+      - /nfs/share/data/stirlingpdf/pipeline:/pipeline/
+    environment:
+      - DOCKER_ENABLE_SECURITY=false
+      - LANGS=en_GB
+      - PATH=/opt/java/openjdk/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/go/bin
+    restart: unless-stopped
+    labels:
+      - "wud.watch=true"
+      - "wud.registry.url=docker.stirlingpdf.com"
+      - "wud.image=stirlingtools/stirling-pdf"
+      - "wud.tag=latest"
+      - "traefik.enable=true"
+      # Public domain HTTPS router (Let's Encrypt via Cloudflare)
+      - "traefik.http.routers.pdf-home.rule=Host(`pdf.home.gonsa.org`)"
+      - "traefik.http.routers.pdf-home.entrypoints=https"
+      - "traefik.http.routers.pdf-home.tls.certresolver=cloudflare"
+      
+      - "traefik.http.routers.pdf.rule=Host(`pdf.gonsa.org`)"
+      - "traefik.http.routers.pdf.entrypoints=https"
+      - "traefik.http.routers.pdf.tls=true"
+      - "traefik.http.routers.pdf.tls.certresolver=cloudflare"
+      - "traefik.http.services.pdf.loadbalancer.server.port=8080"
+      - "traefik.http.routers.pdf.middlewares=authentik@file"
+      
+      # 🔐 Basic Auth
+     # - "traefik.http.routers.pdf.middlewares=pdf-auth"
+     # - "traefik.http.middlewares.pdf-auth.basicauth.users=${TRAEFIK_AUTH_CREDENTIALS}"
+    
+    networks:
+      - traefik-net
+
+networks:
+  traefik-net:
+    external: true
