@@ -1,0 +1,46 @@
+---
+services:
+  obsidian:
+    image: lscr.io/linuxserver/obsidian:1.13.8
+    container_name: obsidian
+    security_opt:
+      #- seccomp:unconfined #optional 
+      - no-new-privileges:true
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Lisbon
+    volumes:
+      - /nfs/share/data/obsidian/config:/config
+    ports:
+      - 3003:3000
+      - 3001:3001
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [compute,video,graphics,utility]
+    shm_size: "1gb"
+  #  restart: unless-stopped
+
+    
+    labels:
+      - "traefik.enable=true"
+      # Public domain HTTPS router (Let's Encrypt via Cloudflare)
+      - "traefik.http.routers.obsidian.rule=Host(`obsidian.gonsa.org`)"
+      - "traefik.http.routers.obsidian.entrypoints=https"
+      - "traefik.http.routers.obsidian.tls=true"
+      - "traefik.http.routers.obsidian.tls.certresolver=cloudflare"
+      - "traefik.http.services.obsidian.loadbalancer.server.port=3000"
+      # 🔐 Basic Auth
+     # - "traefik.http.routers.obsidian.middlewares=obsidian-auth"
+     # - "traefik.http.middlewares.obsidian-auth.basicauth.users=${TRAEFIK_AUTH_CREDENTIALS}"
+    
+    networks:
+      - traefik-net
+
+networks:
+  traefik-net:
+    external: true
