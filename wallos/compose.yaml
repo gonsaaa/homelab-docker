@@ -1,0 +1,39 @@
+services:
+  wallos:
+    container_name: wallos
+    image: bellamy/wallos:5.5.0
+
+   # ports:
+   #   - "8282:80/tcp"
+    environment:
+      TZ: 'Europe/Lisbon'
+    volumes:
+      - /nfs/share/data/wallos/db:/var/www/html/db
+      - /nfs/share/data/wallos/logos:/var/www/html/images/uploads/logos
+    restart: unless-stopped
+
+    labels:
+      - "traefik.enable=true"
+    # Public domain HTTPS router (Let's Encrypt via Cloudflare)
+      - "traefik.http.routers.wallos.rule=Host(`wallos.gonsa.org`)"
+      - "traefik.http.routers.wallos.entrypoints=https"
+      - "traefik.http.routers.wallos.tls.certresolver=cloudflare"
+
+    # HTTP-to-HTTPS redirect for public domain if not using CF Tunnel
+      - "traefik.http.routers.wallos-http.rule=Host(`wallos.gonsa.org`)"
+      - "traefik.http.routers.wallos-http.entrypoints=http"
+      - "traefik.http.routers.wallos-http.middlewares=redirect-to-https"
+
+    # Define the middleware for redirect
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+      - "traefik.http.routers.wallos.middlewares=secured@file"
+
+    # Shared service definition
+      - "traefik.http.services.wallos.loadbalancer.server.port=80"
+
+    networks:
+      - traefik-net
+
+networks:
+  traefik-net:
+    external: true
