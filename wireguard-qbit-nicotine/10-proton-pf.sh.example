@@ -1,0 +1,75 @@
+#####file placed in wireguard/custom-cont-init.d/ #########
+
+#!/usr/bin/with-contenv sh
+
+echo "Installing Proton PF dependencies..."
+apk add --no-cache libnatpmp curl
+
+echo "natpmpc location:"
+which natpmpc || exit 1
+
+echo "Starting Proton VPN NAT-PMP helper in background..."
+
+(
+  echo "Proton PF background loop started"
+  echo "Waiting for WireGuard interface wg0..."
+
+  while ! ip link show wg0 >/dev/null 2>&1; do
+    sleep 5
+  done
+
+  echo "wg0 exists. Waiting 15 more seconds for tunnel/routes..."
+  sleep 15
+
+  GATEWAY="10.2.0.1"
+  LAST_PORT=""
+
+  while true; do
+    UDP_OUT="$(timeout 15 natpmpc -a 1 0 udp 60 -g "$GATEWAY" 2>&1 || true)"
+    TCP_OUT="$(timeout 15 natpmpc -a 1 0 tcp 60 -g "$GATEWAY" 2>&1 || true)"
+
+    PORT="$(echo "$TCP_OUT" | sed -n 's/.*Mapped public port \([0-9][0-9]*\).*/\1/p' | head -n1)"
+
+    if [ -n "$PORT" ]; then
+      echo "$PORT" > /data/forwarded_port
+
+      if [ "$PORT" != "$LAST_PORT" ]; then
+        echo "Proton forwarded port is now: $PORT"
+
+        echo "Updating qBittorrent listening port..."
+
+        HTTP_CODE="$(
+          curl -sS \
+            -o /tmp/qbit-pf-response \
+            -w '%{http_code}' \
+            -X POST \
+            -H "Authorization: Bearer $QBIT_API_KEY" \
+            --data-urlencode "json={\"listen_port\":$PORT,\"upnp\":false}" \
+            http://127.0.0.1:8081/api/v2/app/setPreferences \
+            || true
+        )"
+
+        if [ "$HTTP_CODE" = "200" ]; then
+          echo "qBittorrent listening port updated to: $PORT"
+          LAST_PORT="$PORT"
+        else
+          echo "WARNING: Could not update qBittorrent. HTTP status: $HTTP_CODE"
+        fi
+      fi
+    else
+      echo "ERROR: Could not parse Proton forwarded port"
+      echo "TCP output:"
+      echo "$TCP_OUT"
+      echo "UDP output:"
+      echo "$UDP_OUT"
+
+      sleep 15
+      continue
+    fi
+
+    sleep 45
+  done
+
+) >/proc/1/fd/1 2>/proc/1/fd/2 &
+
+exit 0
