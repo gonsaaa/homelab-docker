@@ -1,0 +1,26 @@
+services:
+  monitoring:
+    image: nicolargo/glances:4.5.6
+    container_name: glances
+    pid: host
+    network_mode: host
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /nfs/share/data/glances/glances.conf:/etc/glances/glances.conf
+      # Uncomment the below line if you want glances to display host OS detail instead of container's
+      # - /etc/os-release:/etc/os-release:ro
+    environment:
+      - "GLANCES_OPT=-w"
+      - TZ=Europe/Lisbon
+    ports:
+     - 61208:61208
+     - 61209:61209
+    # For nvidia GPUs
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    restart: unless-stopped
