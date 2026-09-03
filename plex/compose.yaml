@@ -14,7 +14,7 @@ services:
       - 32400:32400/udp
       - 32469:32469/tcp # (access to the Plex DLNA Server)
       - 1900:1900/udp # (access to the Plex DLNA Server)
-      - 32410:32410/udp # (Enable “G’Day Mate” discovery. Allows some Plex apps and servers to find each other automatically on a local network.) 
+      - 32410:32410/udp # (Enable “GDay Mate” discovery. Allows some Plex apps and servers to find each other automatically on a local network.) 
       - 32412:32412/udp # (GDM network discovery)
       - 32413:32413/udp # (GDM network discovery)
       - 32414:32414/udp # (GDM network discovery)
