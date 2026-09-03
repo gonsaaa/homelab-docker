@@ -13,7 +13,7 @@ services:
     volumes:
       - /nfs/share/data/obsidian/config:/config
     ports:
-      - 3003:3000
+      - 3004:3000
       - 3001:3001
     deploy:
       resources:
