@@ -1,0 +1,55 @@
+services:
+  mealie:
+    image: ghcr.io/mealie-recipes/mealie:v3.25.0
+    container_name: mealie
+    restart: unless-stopped
+#    ports:
+#        - "9925:9000"  
+    deploy:
+      resources:
+        limits:
+          memory: 1000M  
+    volumes:
+      - /nfs/share/data/mealie:/app/data/
+    environment:
+      # Set Backend ENV Variables Here
+      ALLOW_SIGNUP: false
+      PUID: 1000
+      PGID: 1000
+      TZ: Europe/Lisbon
+      MAX_WORKERS: 1
+      WEB_CONCURRENCY: 1
+      BASE_URL: https://mealie.gonsa.org
+      OIDC_AUTH_ENABLED: false
+      OIDC_SIGNUP_ENABLED: false
+      OIDC_CONFIGURATION_URL: ${OIDC_CONFIGURATION_URL}
+      OIDC_CLIENT_ID: ${OIDC_CLIENT_ID}
+      OIDC_CLIENT_SECRET: ${OIDC_CLIENT_SECRET}
+      OIDC_AUTO_REDIRECT: true
+      OIDC_USER_CLAIM: preferred_username
+      OIDC_SCOPES_OVERRIDE: "openid profile email"
+
+      OIDC_PROVIDER_NAME: Authentik
+      OIDC_REMEMBER_ME: true
+
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.mealie.rule=Host(`mealie.gonsa.org`)
+      - traefik.http.routers.mealie.entrypoints=https
+      - traefik.http.routers.mealie.tls=true
+      - traefik.http.routers.mealie.tls.certresolver=cloudflare
+    # HTTP-to-HTTPS redirect for public domain if not using CF Tunnel
+      - traefik.http.routers.mealie-http.rule=Host(`mealie.gonsa.org`)
+      - traefik.http.routers.mealie-http.entrypoints=http
+      - traefik.http.routers.mealie-http.middlewares=mealie-https-redirect
+
+      - traefik.http.middlewares.mealie-https-redirect.redirectscheme.scheme=https
+#      - traefik.http.routers.mealie.middlewares=secured@file
+      - traefik.http.services.mealie.loadbalancer.server.port=9000
+
+    networks:
+      - traefik-net
+
+networks:
+  traefik-net:
+    external: true
