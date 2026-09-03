@@ -1,0 +1,70 @@
+services:
+  plex:
+    image: plexinc/pms-docker:1.43.3.10896-cb3ebc72d
+    container_name: plex
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=all
+      - PLEX_UID=1000
+      - PLEX_GID=1000
+      - TZ=Europe/Lisbon
+
+    ports:
+      - 32400:32400/tcp # only port that is strictly required
+      - 32400:32400/udp
+      - 32469:32469/tcp # (access to the Plex DLNA Server)
+      - 1900:1900/udp # (access to the Plex DLNA Server)
+      - 32410:32410/udp # (Enable “G’Day Mate” discovery. Allows some Plex apps and servers to find each other automatically on a local network.) 
+      - 32412:32412/udp # (GDM network discovery)
+      - 32413:32413/udp # (GDM network discovery)
+      - 32414:32414/udp # (GDM network discovery)
+    volumes: 
+    - /nfs/share/data/plex/config:/config
+    - /nfs/share/data/plex/transcode:/transcode
+    - /nfs/share/data/media/series:/tv
+    - /nfs/share/data/media/movies_uhd:/movies_uhd
+    - /nfs/share/data/media/movies_hd:/movies_hd
+    - /nfs/share/mp3:/music
+    - /nfs/share/data/plex/PlexDBRepair-1.10.02:/DBRepair
+    - /nfs/share/data/umtk/movies:/umtkmovies
+    - /nfs/share/data/umtk/tv:/umtktv
+
+    
+    security_opt:
+      - seccomp=unconfined
+    
+    # NVIDIA
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+    restart: unless-stopped
+    
+    labels:
+      - "traefik.enable=true"
+    # Route HTTPS traffic to Plex
+      - "traefik.http.routers.plex.rule=Host(`plex.gonsa.org`)"
+      - "traefik.http.routers.plex.entrypoints=https"
+      - "traefik.http.routers.plex.tls=true"
+      - "traefik.http.routers.plex.tls.certresolver=cloudflare"
+    # Define which internal port Plex is running on
+      - "traefik.http.services.plex.loadbalancer.server.port=32400"
+     # Redirect http to https:
+      - "traefik.http.routers.plex-http.entrypoints=http"
+      - "traefik.http.routers.plex-http.rule=Host(`plex.gonsa.org`)"
+      - "traefik.http.routers.plex-http.middlewares=plex-https-redirect"
+      - "traefik.http.middlewares.plex-https-redirect.redirectscheme.scheme=https"
+      - "traefik.docker.network=traefik-net"
+      - "traefik.http.routers.plex.middlewares=secured@file"
+
+
+    networks:
+      - traefik-net
+
+networks:
+  traefik-net:
+    external: true
