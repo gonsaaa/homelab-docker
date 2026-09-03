@@ -1,6 +1,6 @@
 services:
   firefox:
-    image: jlesage/firefox:26.08.3
+    image: jlesage/firefox:v26.08.3
     container_name: firefox
    # network_mode: bridge
 #    ports:
