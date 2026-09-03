@@ -1,0 +1,43 @@
+services:
+  firefox:
+    image: jlesage/firefox
+    container_name: firefox
+   # network_mode: bridge
+#    ports:
+#      - "5800:5800"
+    volumes:
+      - "/nfs/share/data/firefox:/config:rw"
+    mem_limit: 4g            # sets memory.max
+    memswap_limit: 8g        # total = mem + swap; enables swap for the cgroup
+    # --- shared memory for Firefox ---
+    shm_size: 1gb            # /dev/shm from 64MB -> 1GB
+    # --- fast temp space (optional but helpful) ---
+    tmpfs:
+      - /tmp:size=1g,mode=1777
+
+    environment:
+      - TZ=Europe/Lisbon
+      - DARK_MODE=1
+      - WEB_AUDIO=1
+      - WEB_AUTHENTICATION=1
+      - WEB_AUTHENTICATION_USERNAME=${WEB_AUTHENTICATION_USERNAME}
+      - WEB_AUTHENTICATION_PASSWORD=${WEB_AUTHENTICATION_PASSWORD}
+      - SECURE_CONNECTION=1
+      #- SECURE_CONNECTION_VNC_METHOD=SSL
+    restart: always
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.firefox.rule=Host(`fox.gonsa.org`)"
+      - "traefik.http.routers.firefox.entrypoints=https"
+      - "traefik.http.routers.firefox.tls=true"
+      - "traefik.http.routers.firefox.tls.certresolver=cloudflare"
+      - "traefik.http.services.firefox.loadbalancer.server.scheme=https"
+      - "traefik.http.routers.firefox.middlewares=secured@file,authentik@file"
+
+    networks:
+      - traefik-net
+
+networks:
+  traefik-net:
+    external: true
