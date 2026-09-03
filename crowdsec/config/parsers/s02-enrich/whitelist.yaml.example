@@ -1,0 +1,7 @@
+name: whitelist
+description: "My personal whitelist"
+whitelist:
+  reason: "My trusted IPs"
+  ip:
+    - "<Public-IP>" # My Home IP
+    - "<Public-IP>" # Lyca Mobile DK/GB
