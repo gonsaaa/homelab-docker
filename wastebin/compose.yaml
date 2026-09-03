@@ -1,0 +1,32 @@
+services:
+  wastebin:
+    environment:
+      - /nfs/share/data/wastebin/db=/data/state.db
+  #  network_mode: bridge
+    ports:
+      - "8098:8088"
+    volumes:
+      - '/nfs/share/data/wastebin:/data'
+    image: 'quxfoo/wastebin:3.7.2'
+    container_name: wastebin
+    restart: unless-stopped
+
+    labels:
+      - "traefik.enable=true"
+      # Public domain HTTPS router (Let's Encrypt via Cloudflare)
+      - "traefik.http.routers.wastebin-public.rule=Host(`wastebin.gonsa.org`)"
+      - "traefik.http.routers.wastebin-public.entrypoints=https"
+      - "traefik.http.routers.wastebin-public.tls=true"
+      - "traefik.http.routers.wastebin-public.tls.certresolver=cloudflare"
+      - "traefik.http.services.wastebin-public.loadbalancer.server.port=8088"
+      
+      # 🔐 Basic Auth
+      #- "traefik.http.routers.wastebin-public.middlewares=wastebin-public-auth"
+      #- "traefik.http.middlewares.wastebin-public-auth.wastebin.users=${TRAEFIK_AUTH_CREDENTIALS}"
+    
+    networks:
+      - traefik-net
+
+networks:
+  traefik-net:
+    external: true
