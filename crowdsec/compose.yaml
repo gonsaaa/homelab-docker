@@ -1,0 +1,93 @@
+services:
+  crowdsec:
+    image: crowdsecurity/crowdsec:v1.8.1
+    container_name: crowdsec
+    environment:
+      CROWDSEC_PROMETHEUS_ENABLED: true
+      CROWDSEC_PROMETHEUS_LISTEN: 0.0.0.0:6060
+      LAPI_PROMETHEUS_ENABLED: true
+      LAPI_PROMETHEUS_LISTEN: 0.0.0.0:6061
+      TZ: Europe/Lisbon
+      GID: "${GID-1000}"
+      COLLECTIONS: "crowdsecurity/linux crowdsecurity/traefik"
+      #  Tell CrowdSec to use Postgres! 
+      DB_BACKEND: pgsql
+      POSTGRES_HOST: crowdsec-db
+      POSTGRES_DB: crowdsec
+      POSTGRES_USER: crowdsec
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      #  ------------------------------ 
+    volumes:
+      - /nfs/share/data/crowdsec/acquis.yaml:/etc/crowdsec/acquis.yaml
+      - /home/gonsa/local-crowdsec-db:/var/lib/crowdsec/data/
+      - /nfs/share/data/crowdsec/config:/etc/crowdsec/
+      - /home/gonsa/traefik/logs:/var/log/traefik/:ro
+      - /etc/localtime:/etc/localtime:ro
+
+    networks:
+      traefik-net:
+
+    logging:               #  capping huge logs
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+#    labels:
+#      - "traefik.enable=true"
+#      - "traefik.http.routers.crowdsec.rule=Host(`crowdsec.gonsa.org`)"
+#      - "traefik.http.routers.crowdsec.entrypoints=https"
+#      - "traefik.http.routers.crowdsec.tls=true"
+#      - "traefik.http.routers.crowdsec.tls.certresolver=cloudflare"
+#      - "traefik.http.services.crowdsec.loadbalancer.server.port=8080"
+     # Redirect http to https:
+#      - "traefik.http.routers.crowdsec-http.entrypoints=http"
+#      - "traefik.http.routers.crowdsec-http.rule=Host(`crowdsec.gonsa.org`)"
+#      - "traefik.http.routers.crowdsec-http.middlewares=crowdsec-https-redirect"
+#      - "traefik.http.middlewares.crowdsec-https-redirect.redirectscheme.scheme=https"
+
+
+  crowdsec-db:
+    image: postgres:15-alpine
+    container_name: crowdsec-db
+    environment:
+      POSTGRES_DB: crowdsec
+      POSTGRES_USER: crowdsec
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - crowdsec-pg-data:/var/lib/postgresql/data
+    networks:
+      - traefik-net
+    restart: unless-stopped
+
+
+  bouncer-traefik:
+    image: docker.io/fbonalair/traefik-crowdsec-bouncer:latest
+    container_name: bouncer-traefik
+    environment:
+      TZ: Europe/Lisbon
+      CROWDSEC_BOUNCER_API_KEY: ${CROWDSEC_BOUNCER_API_KEY}
+      CROWDSEC_AGENT_HOST: crowdsec:8080
+
+    logging:               # capping huge logs
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+    networks:
+      - traefik-net
+    depends_on:
+       - crowdsec
+
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+volumes:
+  crowdsec-pg-data:
+networks:
+  traefik-net:
+    external: true
