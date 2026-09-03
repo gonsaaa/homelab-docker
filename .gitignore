@@ -12,6 +12,7 @@
 # Explicit secret files
 secrets.yaml
 secrets.yml
+secrets/
 
 # Editor / OS junk
 *.swp
