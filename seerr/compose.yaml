@@ -1,0 +1,44 @@
+services:
+  seerr:
+    image: ghcr.io/seerr-team/seerr:v3.4.1
+    container_name: seerr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Lisbon
+    volumes:
+      - /nfs/share/data/overseer/config:/app/config
+    ports:
+      - 5055:5055
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+    # Local domain router (self-signed HTTPS)
+      - "traefik.http.routers.seerr-local.rule=Host(`seerr.home`)"
+      - "traefik.http.routers.seerr-local.entrypoints=https"
+      - "traefik.http.routers.seerr-local.tls=true"
+
+    # Public domain HTTPS router (Let's Encrypt via Cloudflare)
+      - "traefik.http.routers.seerr-public.rule=Host(`seerr.gonsa.org`)"
+      - "traefik.http.routers.seerr-public.entrypoints=https"
+      - "traefik.http.routers.seerr-public.tls=true"
+      - "traefik.http.routers.seerr-public.tls.certresolver=cloudflare"
+
+    # HTTP-to-HTTPS redirect for public domain if not using CF Tunnel
+      - "traefik.http.routers.seerr-http.rule=Host(`seerr.gonsa.org`)"
+      - "traefik.http.routers.seerr-http.entrypoints=http"
+      - "traefik.http.routers.seerr-http.middlewares=seerr-https-redirect"
+
+    # Define the middleware for redirect
+      - "traefik.http.middlewares.seerr-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.seerr.middlewares=secured@file"
+    # Shared service definition
+      - "traefik.http.services.seerr.loadbalancer.server.port=5055"
+
+    networks:
+      - traefik-net
+
+networks:
+  traefik-net:
+    external: true
+
