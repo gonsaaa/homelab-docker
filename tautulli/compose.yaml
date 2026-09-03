@@ -1,0 +1,35 @@
+services:
+  tautulli:
+    image: ghcr.io/tautulli/tautulli:v2.18.1
+    container_name: tautulli
+    restart: unless-stopped
+    volumes:
+      - /nfs/share/data/tautulli:/config
+      - /nfs/share/data/plex/config:/plex
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - PUID=1000
+    # - PGID=1000
+      - PGID=996
+      - TZ=Europe/Lisbon
+   # ports:
+   #   - 8181:8181
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.tautulli-public.entrypoints=https"
+      - "traefik.http.routers.tautulli-public.rule=Host(`tautulli.gonsa.org`)"
+      - "traefik.http.routers.tautulli-public.tls.certresolver=cloudflare"
+
+      - "traefik.http.routers.tautulli-http.entrypoints=http"
+      - "traefik.http.routers.tautulli-http.rule=Host(`tautulli.gonsa.org`)"
+      - "traefik.http.routers.tautulli-http.middlewares=redirect-to-https"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+      - "traefik.http.services.tautulli.loadbalancer.server.port=8181"
+
+    networks:
+      - traefik-net
+
+networks:
+  traefik-net:
+    external: true
