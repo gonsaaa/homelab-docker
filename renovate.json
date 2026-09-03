@@ -83,6 +83,16 @@
     {
       "matchPackageNames": ["gtstef/filebrowser"],
       "changelogUrl": "https://github.com/gtsteffaniak/filebrowser/releases"
+    },
+
+    {
+      "description": "Handle Plex Media Server version tags",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": [
+        "docker.io/plexinc/pms-docker",
+        "plexinc/pms-docker"
+      ],
+      "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)\\.(?<build>\\d+)-[a-f0-9]+$"
     }
     
   ]
