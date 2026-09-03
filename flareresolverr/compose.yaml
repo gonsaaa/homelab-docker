@@ -1,0 +1,13 @@
+services:
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr:1.1.11
+    container_name: flaresolverr
+    environment:
+      - LOG_LEVEL=info
+      - LOG_HTML=${LOG_HTML:-false}
+      - CAPTCHA_SOLVER=hcaptcha
+      - TZ=Europe/Lisbon
+      - TEST_URL=https://www.google.com
+    ports:
+      - "${PORT:-8191}:8191"
+    restart: unless-stopped 
