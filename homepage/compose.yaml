@@ -1,0 +1,37 @@
+services:
+  homepage:
+    image: ghcr.io/gethomepage/homepage:v2.2.0
+    container_name: homepage
+    ports:
+      - 3000:3000
+    environment:
+      - TZ=Europe/Lisbon
+      #- HOMEPAGE_ALLOWED_HOSTS=vmdocker:3000
+      - HOMEPAGE_ALLOWED_HOSTS=*
+      - PUID=1000
+      - PGID=1000
+
+    volumes:
+      - /nfs/share/data/homepage/config:/app/config
+      - /nfs/share/data/homepage/app/public/icons:/app/public/icons
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /nfs/share:/share
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.homepage.entrypoints=https"
+      - "traefik.http.routers.homepage.rule=Host(`homepage.gonsa.org`)"
+      - "traefik.http.routers.homepage.tls.certresolver=cloudflare"
+      # HTTP-to-HTTPS redirect
+      - "traefik.http.routers.homepage-http.entrypoints=http"
+      - "traefik.http.routers.homepage-http.rule=Host(`homepage.gonsa.org`)"
+      - "traefik.http.routers.homepage-http.middlewares=redirect-to-https"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+      - "traefik.http.routers.homepage.middlewares=authentik@file"
+
+    networks:
+      - traefik-net
+
+networks:
+  traefik-net:
+    external: true
