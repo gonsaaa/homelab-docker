@@ -1,0 +1,52 @@
+name: immichframe
+services:
+  immichframe:
+    container_name: immichframe
+    image: ghcr.io/immichframe/immichframe:v1.0.37.0
+    network_mode: bridge
+    restart: on-failure
+    ports:
+      - "8289:8080"
+    environment:
+      TZ: "Europe/Lisbon"
+      # Required
+      ImmichServerUrl: ${YOUR-IMMICH-URL}
+      ApiKey: ${APIKEY}
+      #Security
+      AuthenticationSecret: "test"
+      # Image
+      ImageZoom: "true"  
+      Interval: "10"
+      TransitionDuration: "2"
+      # Filters
+      Albums: "sba,ALBUM2"
+      #ExcludedAlbums: "ALBUM3,ALBUM4"
+      #People: "PERSON1,PERSON2"
+      ShowMemories: "false"
+      ShowFavorites: "false"
+      ImagesFromDays: ""
+      ImagesFromDate: ""
+      ImagesUntilDate: ""
+      # Clock
+      ShowClock: "true"
+      ClockFormat: "HH:mm"
+      # Weather
+      WeatherApiKey: "API-KEY"
+      UnitSystem: "metric"
+      Language: "en"
+      ShowWeatherDescription: "true"
+      WeatherLatLong: "40.730610, -73.935242"
+      # Metadata
+      ShowImageDesc: "true"
+      ShowImageLocation: "true"
+      ShowPhotoDate: "true"
+      PhotoDateFormat: "yyyy-MM-dd"
+      # Caching
+      RenewImagesDuration: "30"
+      DownloadImages: "false"
+      RefreshAlbumPeopleInterval: "12"
+      # UI
+      PrimaryColor: "#FF5733"
+      BaseFontSize: "17px"
+      # Misc
+      ImmichFrameAlbumName: ""
