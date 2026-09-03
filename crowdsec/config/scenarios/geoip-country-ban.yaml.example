@@ -1,0 +1,54 @@
+name: gonsa/geoip-country-ban
+description: "Ban IPs from all countries except below. For DNS only. immich, jellyfin, plex, netbird and headscale. All the rest is on Cloudlfare tunnels; WAF to block/unblock"
+filter: |
+  evt.Meta.Enriched != '' and evt.Meta.Enriched not in ["PT"]
+groupby: evt.Meta.source_ip
+type: leaky
+capacity: 1
+leakspeed: 1m
+blackhole: 5m
+duration: 168h
+labels:
+  type: ban
+  remediation: true
+  classification:
+    - geoip
+    - country
+
+# Country codes reference for quick unblocking:
+# PT  # Portugal
+# ES  # Spain
+# FR  # France
+# DE  # Germany
+# GB  # United Kingdom
+# IT  # Italy
+# NL  # Netherlands
+# BE  # Belgium
+# DK  # Denmark
+# SE  # Sweden
+# NO  # Norway
+# FI  # Finland
+# CH  # Switzerland
+# AT  # Austria
+# IE  # Ireland
+# US  # United States
+# CA  # Canada
+# AU  # Australia
+# NZ  # New Zealand
+# BR  # Brazil
+# AR  # Argentina
+# MX  # Mexico
+# TR  # Turkey
+# PL  # Poland
+# CZ  # Czech Republic
+# HU  # Hungary
+# GR  # Greece
+# RU  # Russia
+# CN  # China
+# IN  # India
+# JP  # Japan
+# KR  # South Korea
+# SG  # Singapore
+# ZA  # South Africa
+# SA  # Saudi Arabia
+# AE  # United Arab Emirates
