@@ -1,0 +1,58 @@
+services:
+  jellyfin:
+    image: jellyfin/jellyfin
+    container_name: jellyfin
+    security_opt:
+      - no-new-privileges:true
+    ports:
+      - 8096:8096
+      - 8920:8920 #optional
+      - 7359:7359/udp #optional
+      #- 1900:1900/udp #optional
+    environment:
+      - TZ=Europe/Lisbon
+      - JELLYFIN_PublishedServerUrl=http://jellyfin.gonsa.org
+      - NVIDIA_DRIVER_CAPABILITIES=all
+      - NVIDIA_VISIBLE_DEVICES=all
+    user: 1000:1000
+    #network_mode: 'host'
+    volumes:
+      - /nfs/share/data/jellyfin/config:/config
+      - /nfs/share/data/jellyfin/cache:/cache
+      - /nfs/share/data/media:/media
+    #devices:   
+     # - /dev/dri/renderD128:/dev/dri/renderD128  # ls /dev/dri
+    #group_add:
+     # - "105"  # match output of: getent group render | cut -d: -f3
+    runtime: nvidia
+    deploy:
+      resources:
+        reservations:
+          devices:
+          - capabilities: [gpu]
+
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+    
+    labels:
+      - "traefik.enable=true"
+      # Public domain HTTPS router (Let's Encrypt via Cloudflare)
+      - "traefik.http.routers.jellyfin.rule=Host(`jellyfin.gonsa.org`)"
+      - "traefik.http.routers.jellyfin.entrypoints=https"
+      - "traefik.http.routers.jellyfin.tls=true"
+      - "traefik.http.routers.jellyfin.tls.certresolver=cloudflare"
+      - "traefik.http.services.jellyfin.loadbalancer.server.port=8096"
+     # Redirect http to https:
+      - "traefik.http.routers.jellyfin-http.entrypoints=http"
+      - "traefik.http.routers.jellyfin-http.rule=Host(`jellyfin.gonsa.org`)"
+      - "traefik.http.routers.jellyfin-http.middlewares=redirect-to-https"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+      - "traefik.http.routers.jellyfin.middlewares=secured@file"
+    
+    networks:
+      - traefik-net
+
+networks:
+  traefik-net:
+    external: true
