@@ -1,0 +1,34 @@
+{
+  "cloudflare": [
+    {
+      "authentication": {
+          "api_token": "YOUR-CF-TOKEN",
+          "api_key": {
+              "api_key": "api_key_here", #not needed
+              "account_email": "your_email_here" #not needed
+          }
+      },
+      "zone_id": "YOUR-ZONE-ID",
+      "subdomains": [
+        {
+          "name": "home",
+          "proxied": false
+        },
+
+        {
+          "name": "immich",
+          "proxied": false
+        },
+
+        {  "name":"plex",
+           "proxied": false
+    },
+        {  "name": "jellyfin",
+           "proxied": false
+        }
+      ]
+    }
+  ],
+  "a": true,
+  "aaaa": false
+}
