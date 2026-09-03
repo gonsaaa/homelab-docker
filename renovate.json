@@ -50,11 +50,31 @@
     },
 
     {
+      "description": "Keep Immich PostgreSQL on major 18",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": [
+        "ghcr.io/immich-app/postgres"
+      ],
+      "allowedVersions": "/^18-/"
+    }
+
+    {
       "description": "Ignore Redis major upgrades",
       "matchDatasources": ["docker"],
       "matchPackageNames": [
         "docker.io/library/redis",
         "redis"
+      ],
+      "matchUpdateTypes": ["major"],
+      "enabled": false
+    },
+
+    {
+      "description": "Ignore Valkey major upgrades (immich)",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": [
+        "docker.io/valkey/valkey",
+        "valkey/valkey"
       ],
       "matchUpdateTypes": ["major"],
       "enabled": false
