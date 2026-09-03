@@ -1,0 +1,27 @@
+services:
+  nebula-sync:
+    network_mode: host
+    image: ghcr.io/lovelaze/nebula-sync:0.11.2
+    container_name: nebula-sync
+    security_opt:
+      - no-new-privileges:true
+    user: "1000:1000"
+    restart: unless-stopped
+    environment:
+      - PRIMARY_FILE=/run/secrets/nebula_primary
+      - REPLICAS_FILE=/run/secrets/nebula_replica
+      - FULL_SYNC=true
+      - CRON=@daily
+      - TZ=Europe/Lisbon
+
+
+    secrets:
+      - nebula_primary
+      - nebula_replica
+
+secrets:
+  nebula_primary:
+    file: /nfs/share/data/nebula-sync/secrets/primary.txt
+
+  nebula_replica:
+    file: /nfs/share/data/nebula-sync/secrets/replica.txt
