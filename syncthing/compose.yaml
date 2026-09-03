@@ -1,0 +1,36 @@
+services:
+  syncthing:
+    image: lscr.io/linuxserver/syncthing:v2.1.3
+    container_name: syncthing
+    hostname: syncthing #optional
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Lisbon
+    volumes:
+      - /nfs/share/data/syncthing/config:/config
+      #- /path/to/data2:/data2
+    ports:
+  #    - 8384:8384
+      - 22000:22000/tcp
+      - 22000:22000/udp
+      - 21027:21027/udp
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    
+    labels:
+      - "traefik.enable=true"
+      # Public domain HTTPS router (Let's Encrypt via Cloudflare)
+      - "traefik.http.routers.syncthing.rule=Host(`sync.gonsa.org`)"
+      - "traefik.http.routers.syncthing.entrypoints=https"
+      - "traefik.http.routers.syncthing.tls=true"
+      - "traefik.http.routers.syncthing.tls.certresolver=cloudflare"
+      - "traefik.http.services.syncthing.loadbalancer.server.port=8384"
+    
+    networks:
+      - traefik-net
+
+networks:
+  traefik-net:
+    external: true
