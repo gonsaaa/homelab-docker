@@ -1,0 +1,42 @@
+services:
+    maintainerr:
+        image: ghcr.io/jorenn92/maintainerr:v3.26.0
+        container_name: maintainerr
+    #    network_mode: bridge
+        user: 1000:1000
+        volumes:
+          - type: bind
+            source: /nfs/share/data/maintainerr
+            target: /opt/data
+        environment:
+          - TZ=Europe/Lisbon
+#      - DEBUG=true # uncomment to enable debug logs
+#      - BASE_PATH=/maintainerr # uncomment if you're serving maintainerr from a subdirectory
+#      - UI_HOSTNAME=:: # uncomment if you want to listen on IPv6 instead (default 0.0.0.0)
+#      - UI_PORT=6247 # uncomment to change the UI port (default 6246). Useful if you're on a network where the port is already in use
+#      - API_PORT=3002 # uncomment to change the API port (default 3001). Useful if you're on a network where the port is already in use
+   #     ports:
+   #       - 6246:6246
+        restart: unless-stopped
+
+        labels:
+          - "traefik.enable=true"
+    # Route HTTPS traffic to Plex
+          - "traefik.http.routers.maintainerr.rule=Host(`maintainerr.gonsa.org`)"
+          - "traefik.http.routers.maintainerr.entrypoints=https"
+          - "traefik.http.routers.maintainerr.tls=true"
+          - "traefik.http.routers.maintainerr.tls.certresolver=cloudflare"
+     # Redirect http to https:
+          - "traefik.http.routers.maintainerr-http.entrypoints=http"
+          - "traefik.http.routers.maintainerr-http.rule=Host(`maintainerr.gonsa.org`)"
+          - "traefik.http.routers.maintainerr-http.middlewares=maintainerr-https-redirect"
+          - "traefik.http.middlewares.maintainerr-https-redirect.redirectscheme.scheme=https"
+     # - "traefik.http.routers.maintainerr.middlewares=secured@file"
+
+
+        networks:
+          - traefik-net
+
+networks:
+  traefik-net:
+    external: true
