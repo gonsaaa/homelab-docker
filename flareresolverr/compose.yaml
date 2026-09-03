@@ -1,6 +1,6 @@
 services:
   flaresolverr:
-    image: ghcr.io/flaresolverr/flaresolverr:1.1.11
+    image: ghcr.io/flaresolverr/flaresolverr:v1.1.11
     container_name: flaresolverr
     environment:
       - LOG_LEVEL=info
