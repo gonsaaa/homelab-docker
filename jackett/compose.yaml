@@ -1,0 +1,19 @@
+services:
+  jackett:
+    image: lscr.io/linuxserver/jackett:0.24
+    container_name: jackett
+    network_mode: bridge
+    ports:
+      - 9117:9117
+    
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/London
+      - AUTO_UPDATE=true
+      
+    volumes:
+      - /nfs/share/data/jackett/config:/config
+      - /nfs/share/data/jackett/downloads:/downloads
+
+   # restart: unless-stopped
