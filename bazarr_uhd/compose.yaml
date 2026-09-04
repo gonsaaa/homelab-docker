@@ -1,0 +1,18 @@
+services:
+  bazarr:
+    image: lscr.io/linuxserver/bazarr:1.6.0
+    container_name: bazarr_uhd
+    network_mode: bridge
+    ports:
+      - 6768:6767
+      
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Lisbon
+      
+    volumes:
+      - /nfs/share/data/bazarr_uhd/config:/config
+      - /nfs/share/data:/data
+
+    restart: always
