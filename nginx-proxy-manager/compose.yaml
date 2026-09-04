@@ -1,0 +1,16 @@
+services:
+  app:
+    image: jc21/nginx-proxy-manager:v2.15.1
+    container_name: nginx_proxy_manager
+
+   # restart: unless-stopped
+    ports:
+      - 80:80
+      - 4081:81
+      - 443:443
+    volumes:
+      - /nfs/share/data/nginx_proxy_manager/data:/data
+      - /nfs/share/data/nginx_proxy_manager/letsencrypt:/etc/letsencrypt
+      - /nfs/share/data/nginx_proxy_manager/data/force-ssl.conf:/etc/nginx/conf.d/include/force-ssl.conf
+    environment:
+      - TZ=Europe/Lisbon
