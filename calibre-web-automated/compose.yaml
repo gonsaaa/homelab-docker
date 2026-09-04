@@ -1,0 +1,18 @@
+services:
+  calibre-web-automated:
+    image: crocodilestick/calibre-web-automated:v4.0.6
+    container_name: calibre-web-automated
+    ports:
+      - 8085:8083 # Change the first number to change the port you want to access the Web UI, not the second
+    network_mode: bridge
+    
+    #  restart: unless-stopped
+    
+   environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Lisbon
+    volumes:
+      - /nfs/share/data/calibre-web/data:/config
+      - /nfs/share/data/calibre-web-automation/ingest:/cwa-book-ingest
+      - /nfs/share/data/calibre-web/library:/calibre-library
