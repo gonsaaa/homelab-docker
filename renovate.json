@@ -56,7 +56,7 @@
         "ghcr.io/immich-app/postgres"
       ],
       "allowedVersions": "/^18-/"
-    }
+    },
 
     {
       "description": "Ignore Redis major upgrades",
