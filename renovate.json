@@ -93,6 +93,17 @@
         "plexinc/pms-docker"
       ],
       "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)\\.(?<build>\\d+)-[a-f0-9]+$"
+    },
+
+    {
+      "description": "Only use Calibre-Web application version tags",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": [
+        "lscr.io/linuxserver/calibre-web",
+        "docker.io/linuxserver/calibre-web",
+        "linuxserver/calibre-web"
+      ],
+      "allowedVersions": "/^0\\.\\d+\\.\\d+$/"
     }
     
   ]
