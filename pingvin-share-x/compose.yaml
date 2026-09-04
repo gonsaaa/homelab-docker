@@ -1,0 +1,39 @@
+services:
+  pingvin-share-x:
+    image: ghcr.io/smp46/pingvin-share-x:v1.21.2
+    container_name: pingvin-share-x
+    restart: unless-stopped
+
+    environment:
+      TRUST_PROXY: "true"
+      PUID: "1000"
+      PGID: "1000"
+
+      DATABASE_URL: "file:/opt/app/backend/db/pingvin-share.db?connection_limit=1"
+
+    volumes:
+      # Actual uploaded/shared files
+      - /nfs/share/data/pingvin-share-x/data:/opt/app/backend/data
+
+      # SQLite DB kept locally
+      - /var/lib/pingvin-share-x/db:/opt/app/backend/db
+
+      # Logos / custom images
+      - /nfs/share/data/pingvin-share-x/data/images:/opt/app/frontend/public/img
+
+    networks:
+      - traefik-net
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik-net"
+
+      - "traefik.http.routers.pingvin-share.rule=Host(`share.gonsa.org`)"
+      - "traefik.http.routers.pingvin-share.entrypoints=https"
+      - "traefik.http.routers.pingvin-share.tls.certresolver=cloudflare"
+
+      - "traefik.http.services.pingvin-share.loadbalancer.server.port=3000"
+
+networks:
+  traefik-net:
+    external: true
