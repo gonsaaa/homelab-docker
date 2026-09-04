@@ -104,7 +104,18 @@
         "linuxserver/calibre-web"
       ],
       "allowedVersions": "/^0\\.\\d+\\.\\d+$/"
-    }
+    },
+
+    {
+      "description": "Delay LinuxServer WireGuard updates",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": [
+        "lscr.io/linuxserver/wireguard",
+        "docker.io/linuxserver/wireguard",
+        "linuxserver/wireguard"
+      ],
+      "minimumReleaseAge": "3 days"
+}
     
   ]
   
