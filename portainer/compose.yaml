@@ -17,7 +17,7 @@ services:
       - "traefik.http.routers.portainer.tls=true"
       - "traefik.http.routers.portainer.tls.certresolver=cloudflare"
       - "traefik.http.services.portainer.loadbalancer.server.port=9443"
-      - "traefik.http.services.portainer.loadbalancer.server.scheme=https" # This is needed so Traefik knows it’s communicating with Portainer via HTTPS internally.
+      - "traefik.http.services.portainer.loadbalancer.server.scheme=https" # This is needed so Traefik knows its communicating with Portainer via HTTPS internally
 
 
 volumes:
