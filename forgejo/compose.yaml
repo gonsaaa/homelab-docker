@@ -1,0 +1,94 @@
+services:
+  server:
+    image: codeberg.org/forgejo/forgejo:16.0.3
+    container_name: forgejo-server
+    restart: always
+
+    environment:
+      - TZ=Europe/Lisbon
+      - FORGEJO__database__DB_TYPE=postgres
+      - FORGEJO__database__HOST=database:5432
+      - FORGEJO__database__NAME=forgejo
+      - FORGEJO__database__USER=forgejo
+      - FORGEJO__database__PASSWD=${FORGEJO_DATABASE_PASSWORD}
+      - FORGEJO__server__DOMAIN=forgejo.gonsa.org
+      - FORGEJO__server__ROOT_URL=https://forgejo.gonsa.org/
+
+    volumes:
+      - /nfs/share/data/forgejo/data:/data
+
+    ports:
+      - "3205:3000"
+
+    networks:
+      - traefik-net
+      - forgejo-internal
+
+    depends_on:
+      database:
+        condition: service_healthy
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik-net"
+      - "traefik.http.services.forgejo.loadbalancer.server.port=3000"
+
+      - "traefik.http.routers.forgejo.rule=Host(`forgejo.gonsa.org`)"
+      - "traefik.http.routers.forgejo.entrypoints=https"
+      - "traefik.http.routers.forgejo.tls=true"
+      - "traefik.http.routers.forgejo.tls.certresolver=cloudflare"
+      - "traefik.http.routers.forgejo.service=forgejo"
+
+  database:
+    image: postgres:17.11
+    container_name: forgejo-database
+    restart: always
+
+    environment:
+      - POSTGRES_DB=forgejo
+      - POSTGRES_USER=forgejo
+      - POSTGRES_PASSWORD=${FORGEJO_DATABASE_PASSWORD}
+
+    volumes:
+      - /opt/forgejo/database:/var/lib/postgresql/data
+
+    networks:
+      - forgejo-internal
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U forgejo -d forgejo"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  docker-in-docker:
+    image: docker:dind
+    container_name: 'docker_dind'
+    privileged: 'true'
+    command: ['dockerd', '-H', 'tcp://0.0.0.0:2375', '--tls=false']
+    restart: 'unless-stopped'
+
+  runner:
+    image: 'data.forgejo.org/forgejo/runner:13'
+    links:
+      - docker-in-docker
+    depends_on:
+      docker-in-docker:
+        condition: service_started
+    container_name: 'runner'
+    environment:
+      DOCKER_HOST: tcp://docker-in-docker:2375
+    user: 1000:1000
+    volumes:
+      - /nfs/share/data/forgejo/runner/data:/data
+    restart: 'unless-stopped'
+    command: 'forgejo-runner daemon --config /data/runner-config.yml'
+
+
+networks:
+  traefik-net:
+    external: true
+
+  forgejo-internal:
+    internal: true
