@@ -50,15 +50,6 @@
     },
 
     {
-      "description": "Keep Immich PostgreSQL on major 18",
-      "matchDatasources": ["docker"],
-      "matchPackageNames": [
-        "ghcr.io/immich-app/postgres"
-      ],
-      "allowedVersions": "/^18-/"
-    },
-
-    {
       "description": "Ignore Redis major upgrades",
       "matchDatasources": ["docker"],
       "matchPackageNames": [
@@ -67,6 +58,15 @@
       ],
       "matchUpdateTypes": ["major"],
       "enabled": false
+    },
+
+    {
+      "description": "Keep Immich PostgreSQL on major 18",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": [
+        "ghcr.io/immich-app/postgres"
+      ],
+      "allowedVersions": "/^18-/"
     },
 
     {
