@@ -1,0 +1,18 @@
+services:
+  radarr:
+    image: linuxserver/radarr:6.3.0
+    container_name: radarr_uhd
+    ports:
+      - 7879:7878
+      
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/London
+      - UMASK=022
+      
+    volumes:
+      - /nfs/share/data/radarr_uhd/config:/config
+      - /nfs/share/data:/data  
+
+    restart: unless-stopped
