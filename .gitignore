@@ -1,24 +1,19 @@
-# Environment / secrets
 .env
 .env.*
 !.env.example
 
-# Private keys / certificates
 *.key
 *.pem
 *.p12
 *.pfx
 
-# Explicit secret files
 secrets.yaml
 secrets.yml
 secrets/
 
-# Editor / OS junk
 *.swp
 *.swo
 .DS_Store
 Thumbs.db
 
-# Logs
 *.log
