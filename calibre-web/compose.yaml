@@ -35,7 +35,7 @@ services:
       - "traefik.http.routers.calibre-http.rule=Host(`calibre.gonsa.org`)"
 
       - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
-      - "traefik.http.routers.calibre.middlewares=secured@file"
+      - "traefik.http.routers.calibre.middlewares=rate-limit@file"
     networks:
       - traefik-net
 
