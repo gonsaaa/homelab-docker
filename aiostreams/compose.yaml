@@ -24,7 +24,7 @@ services:
 #       Ports
       - "traefik.http.services.aiostreams.loadbalancer.server.port=3000"
 #      # Crowdsec-bouncer and Rate-Limit
-#      - "traefik.http.routers.aiostreams.middlewares=secured@file"
+#      - "traefik.http.routers.aiostreams.middlewares=rate-limit@file"
 
     networks:
       - traefik-net
