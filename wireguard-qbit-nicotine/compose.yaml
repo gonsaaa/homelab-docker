@@ -116,7 +116,7 @@ services:
 
 
   nicotineplus-proper:
-    image: ghcr.io/sirjmann92/nicotineplus-proper:260829
+    image: ghcr.io/sirjmann92/nicotineplus-proper:260905
     container_name: nicotine
 
     network_mode: "service:wireguard"
