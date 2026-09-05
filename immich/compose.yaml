@@ -38,7 +38,7 @@ services:
       - "traefik.http.routers.immich-http.middlewares=immich-https-redirect"
       - "traefik.http.middlewares.immich-https-redirect.redirectscheme.scheme=https"
       - "traefik.http.services.immich.loadbalancer.server.port=2283"
-      - "traefik.http.routers.immich.middlewares=secured@file"
+      - "traefik.http.routers.immich.middlewares=rate-limit@file"
 
     networks:
       - traefik-net
