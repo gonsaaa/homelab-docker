@@ -1,0 +1,45 @@
+services:
+  traefik:
+    image: traefik:v3.7.12
+    container_name: traefik
+    restart: always
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - traefik-net
+    ports:
+      - 80:80
+      - 443:443
+    environment:
+        CLOUDFLARE_DNS_API_TOKEN_FILE: /run/secrets/cf_api_token
+    secrets:
+      - cf_api_token
+    env_file: .env
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /home/gonsa/traefik/traefik.yml:/traefik.yml:ro
+      - /home/gonsa/traefik/conf:/conf:rw
+      - /home/gonsa/traefik/logs:/var/log/traefik
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik-secure.entrypoints=https"
+      - "traefik.http.routers.traefik-secure.rule=Host(`traefik.home.gonsa.org`)"
+      - "traefik.http.routers.traefik-secure.tls=true"
+      - "traefik.http.routers.traefik-secure.tls.certresolver=cloudflare"
+      - "traefik.http.routers.traefik-secure.tls.domains[0].main=home.gonsa.org"
+      - "traefik.http.routers.traefik-secure.tls.domains[0].sans=*.home.gonsa.org"
+      - "traefik.http.routers.traefik-secure.service=api@internal"
+      #http-https
+      - "traefik.http.routers.traefik.entrypoints=http"
+      - "traefik.http.routers.traefik.rule=Host(`traefik.home.gonsa.org`)"
+      - "traefik.http.middlewares.traefik-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=https"
+      - "traefik.http.routers.traefik.middlewares=traefik-https-redirect"
+secrets:
+  cf_api_token:
+    file: /home/gonsa/traefik/cf_api_token.txt
+networks:
+  traefik-net:
+      external: true
