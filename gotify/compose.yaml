@@ -30,7 +30,7 @@ services:
       - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
     # Shared service definition
       - "traefik.http.services.gotify.loadbalancer.server.port=80"
-      - "traefik.http.routers.gotify.middlewares=secured@file"
+      - "traefik.http.routers.gotify.middlewares=rate-limit@file"
 
     networks:
       - traefik-net
