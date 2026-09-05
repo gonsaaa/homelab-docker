@@ -21,7 +21,7 @@ services:
       - "traefik.http.routers.beszel-http.middlewares=redirect-to-https"
       - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
       # Secure = crowdsec & rate-limit
-      - "traefik.http.routers.beszel.middlewares=secured@file"
+      - "traefik.http.routers.beszel.middlewares=rate-limit@file"
     networks:
       - traefik-net
 
