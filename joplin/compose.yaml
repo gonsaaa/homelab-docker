@@ -36,7 +36,7 @@ services:
            - "traefik.http.routers.joplin-http.entrypoints=http"
            - "traefik.http.routers.joplin-http.middlewares=redirect-to-https"
            - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
-           - "traefik.http.routers.joplin.middlewares=secured@file"
+           - "traefik.http.routers.joplin.middlewares=rate-limit@file"
            - "traefik.http.services.joplin.loadbalancer.server.port=22300"
             
         environment:
