@@ -48,7 +48,7 @@ services:
       - "traefik.http.routers.jellyfin-http.rule=Host(`jellyfin.gonsa.org`)"
       - "traefik.http.routers.jellyfin-http.middlewares=redirect-to-https"
       - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
-      - "traefik.http.routers.jellyfin.middlewares=secured@file"
+      - "traefik.http.routers.jellyfin.middlewares=rate-limit@file"
     
     networks:
       - traefik-net
