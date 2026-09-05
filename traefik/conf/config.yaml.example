@@ -1,0 +1,157 @@
+http:
+  routers:
+
+# Apps outside of docker
+    wgdashboard:
+      entryPoints:
+        - https
+      rule: "Host(`wgdashboard.home.gonsa.org`)"
+      tls: {}
+      service: wgdashboard
+
+    nextcloud:
+      entryPoints:
+        - http
+        - https
+      rule: "Host(`cloud.gonsa.org`)"
+      tls:
+        certResolver: cloudflare
+      middlewares:
+        - nextcloud-headers
+        - secured
+      service: nextcloud
+
+    router_home:
+      rule: "Host(`router.home`)"
+      entryPoints:
+        - http
+      service: router_home
+
+    fileserver_home:
+      rule: "Host(`fileserver.home`)"
+      entryPoints:
+        - http
+      service: fileserver_home
+
+    pi-hole:
+      entryPoints:
+        - https
+      rule: "Host(`pi-hole.home.gonsa.org`)"
+      tls: {}
+      service: pi-hole
+
+    dietpi-hole:
+      entryPoints:
+        - https
+      rule: "Host(`dietpi-hole.home.gonsa.org`)"
+      tls: {}
+      service: dietpi-hole
+
+    upsnap:
+      entryPoints:
+        - https
+      rule: "Host(`upsnap.home.gonsa.org`)"
+      tls: {}
+      service: upsnap
+
+    uptime-kuma:
+      entryPoints:
+        - https
+      rule: "Host(`uptime-kuma.home.gonsa.org`)"
+      tls: {}
+      service: uptime-kuma
+
+    home-assistant:
+      entryPoints:
+        - https
+      rule: "Host(`ha.gonsa.org`)"
+      tls: {}
+      service: home-assistant
+
+#####################################################################################
+
+# Services for those apps
+  services:
+    wgdashboard:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.1.92:10086"
+        passHostHeader: true
+
+    nextcloud:
+      loadBalancer:
+        servers:
+          - url: "https://192.168.1.76"
+        passHostHeader: true
+
+    router_home:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.1.1"
+
+    fileserver_home:
+      loadBalancer:
+        servers:
+          - url: "https://192.168.1.77:12321"
+
+    pi-hole:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.1.98:8080/admin/"
+        passHostHeader: true
+
+    dietpi-hole:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.1.88:8080/admin/"
+        passHostHeader: true
+
+    upsnap:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.1.88:8090"
+        passHostHeader: true
+
+    uptime-kuma:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.1.88:3001"
+        passHostHeader: true
+
+    home-assistant:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.1.168:8123"
+        passHostHeader: true
+####################################################################################
+
+# All the middlewares
+  middlewares:
+
+    nextcloud-headers:
+      headers:
+        hostsProxyHeaders:
+          - "X-Forwarded-Host"
+        customRequestHeaders:
+        referrerPolicy: "same-origin"
+
+    ip-whitelist:
+      ipAllowList:
+        sourceRange:
+        - "192.168.0.0/16"    # internal network
+
+    rate-limit:
+      rateLimit:
+        average: 50 # Allow 50 requests per second on average per client IP
+        burst: 100   # Allow short spikes of up to 100 requests at once, before throttling kicks in
+
+    crowdsec-bouncer:
+      forwardauth:
+        address: http://bouncer-traefik:8080/api/v1/forwardAuth
+        trustForwardHeader: true
+
+    secured:
+      chain:
+        middlewares:
+          - crowdsec-bouncer@file
+          - rate-limit
