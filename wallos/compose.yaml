@@ -26,7 +26,7 @@ services:
 
     # Define the middleware for redirect
       - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
-      - "traefik.http.routers.wallos.middlewares=secured@file"
+      - "traefik.http.routers.wallos.middlewares=rate-limit@file"
 
     # Shared service definition
       - "traefik.http.services.wallos.loadbalancer.server.port=80"
