@@ -44,7 +44,7 @@ services:
       - traefik.http.routers.mealie-http.middlewares=mealie-https-redirect
 
       - traefik.http.middlewares.mealie-https-redirect.redirectscheme.scheme=https
-#      - traefik.http.routers.mealie.middlewares=secured@file
+      - traefik.http.routers.mealie.middlewares=rate-limit@file
       - traefik.http.services.mealie.loadbalancer.server.port=9000
 
     networks:
