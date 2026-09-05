@@ -44,13 +44,14 @@ services:
       - "traefik.http.routers.qbit.tls=true"
       - "traefik.http.routers.qbit.tls.certresolver=cloudflare"
       - "traefik.http.routers.qbit.service=qbit"
-
+      - "traefik.http.routers.qbit.middlewares=ip-whitelist@file"
       - "traefik.http.services.qbit.loadbalancer.server.port=8081"
 
       # HTTP -> HTTPS
       - "traefik.http.routers.qbit-http.rule=Host(`qbit.home.gonsa.org`)"
       - "traefik.http.routers.qbit-http.entrypoints=http"
       - "traefik.http.routers.qbit-http.middlewares=qbit-https-redirect"
+      - "traefik.http.routers.qbit-http.service=qbit"
       - "traefik.http.middlewares.qbit-https-redirect.redirectscheme.scheme=https"
 
       # ============================================================
@@ -62,7 +63,7 @@ services:
       - "traefik.http.routers.nicotine-home.tls=true"
       - "traefik.http.routers.nicotine-home.tls.certresolver=cloudflare"
       - "traefik.http.routers.nicotine-home.service=nicotine"
-
+      - "traefik.http.routers.nicotine-home.middlewares=ip-whitelist@file"
       - "traefik.http.services.nicotine.loadbalancer.server.port=6565"
 
       # ============================================================
@@ -80,6 +81,7 @@ services:
       - "traefik.http.routers.nicotine-http.rule=Host(`nicotine.gonsa.org`)"
       - "traefik.http.routers.nicotine-http.entrypoints=http"
       - "traefik.http.routers.nicotine-http.middlewares=nicotine-https-redirect"
+      - "traefik.http.routers.nicotine-http.service=nicotine"
       - "traefik.http.middlewares.nicotine-https-redirect.redirectscheme.scheme=https"
 
 
