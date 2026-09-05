@@ -1,7 +1,7 @@
 # Gonçalo Oliveira
 
 Systems Engineer focused on **Linux**, **Infrastructure as Code** and **DevOps**.
-Currently building things in my Homelab while learning a bit of everything on the way.
+Currently pushing my creativity in my Homelab while learning a bit of everything on the way.
 
 - 🔭 Currently working on: [K8s](https://github.com/gonsa/k8s)
 - 🌱 Currently learning: K8s and AWX deployment
