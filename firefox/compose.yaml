@@ -33,7 +33,7 @@ services:
       - "traefik.http.routers.firefox.tls=true"
       - "traefik.http.routers.firefox.tls.certresolver=cloudflare"
       - "traefik.http.services.firefox.loadbalancer.server.scheme=https"
-      - "traefik.http.routers.firefox.middlewares=secured@file,authentik@file"
+      - "traefik.http.routers.firefox.middlewares=rate-limit@file,authentik@file"
 
     networks:
       - traefik-net
