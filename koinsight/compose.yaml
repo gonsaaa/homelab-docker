@@ -19,7 +19,7 @@ services:
       - "traefik.http.routers.koinsight-http.rule=Host(`koinsight.gonsa.org`)"
       - "traefik.http.routers.koinsight-http.middlewares=redirect-to-https"
       - "traefik.http.services.koinsight.loadbalancer.server.port=3000"
-      - "traefik.http.routers.koinsight.middlewares=secured@file"
+      - "traefik.http.routers.koinsight.middlewares=rate-limit@file"
     networks:
       - traefik-net
 
