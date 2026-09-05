@@ -1,0 +1,36 @@
+labels:
+      - "traefik.enable=true"
+      # myservice - Local only (no auth)
+      - "traefik.http.routers.myservice-home.rule=Host(`myservice.home.gonsa.org`)"
+      - "traefik.http.routers.myservice-home.entrypoints=https"
+      - "traefik.http.routers.myservice-home.tls.certresolver=cloudflare"
+
+      # myservice - External (with authentik)
+      - "traefik.http.routers.myservice.rule=Host(`myservice.gonsa.org`)"
+      - "traefik.http.routers.myservice.entrypoints=https"
+      - "traefik.http.routers.myservice.tls.certresolver=cloudflare"
+      - "traefik.http.routers.myservice.middlewares=authentik@file"
+
+      # HTTP redirect to HTTPS
+      - "traefik.http.routers.myservice-http.entrypoints=http"
+      - "traefik.http.routers.myservice-http.rule=Host(`myservice.gonsa.org`)"
+      - "traefik.http.routers.myservice-http.middlewares=redirect-to-https"
+
+      # Ports
+      - "traefik.http.services.myservice.loadbalancer.server.port=8080"
+
+      # Crowdsec-bouncer and Rate-Limit
+      - "traefik.http.routers.myservice.middlewares=secured@file"
+
+      # When there's more networks in the same stack
+      - "traefik.docker.network=traefik-net"
+
+      # 🔐 Basic Auth
+      - "traefik.http.middlewares.myservice-auth.basicauth.users=${TRAEFIK_AUTH_CREDENTIALS}"
+
+    networks:
+      - traefik-net
+
+networks:
+  traefik-net:
+    external: true
