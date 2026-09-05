@@ -31,7 +31,7 @@ services:
 
     # Define the middleware for redirect
       - "traefik.http.middlewares.seerr-https-redirect.redirectscheme.scheme=https"
-      - "traefik.http.routers.seerr.middlewares=secured@file"
+      - "traefik.http.routers.seerr.middlewares=rate-limit@file"
     # Shared service definition
       - "traefik.http.services.seerr.loadbalancer.server.port=5055"
 
