@@ -15,6 +15,5 @@ secrets/
 *.swo
 .DS_Store
 Thumbs.db
-*.json
 
 *.log
