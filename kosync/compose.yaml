@@ -22,7 +22,7 @@ services:
           # Ports
           - "traefik.http.services.kosync.loadbalancer.server.port=17200"    
           # Crowdsec-bouncer and Rate-Limit
-          - "traefik.http.routers.kosync.middlewares=secured@file"
+          - "traefik.http.routers.kosync.middlewares=rate-limit@file"
 
         networks:
           - traefik-net
