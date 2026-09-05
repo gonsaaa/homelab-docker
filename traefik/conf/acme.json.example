@@ -1,0 +1,11 @@
+{
+  "cloudflare": {
+    "Account": {
+      "Email": "youremail@example.com",
+      "Registration": {
+        "body": {
+          "status": "valid"
+        },
+        "uri": "https://acme-v02.api.letsencrypt.org/acme/acct/158486"
+      },
+      "PrivateKey":
