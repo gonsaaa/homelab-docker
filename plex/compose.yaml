@@ -59,7 +59,7 @@ services:
       - "traefik.http.routers.plex-http.middlewares=plex-https-redirect"
       - "traefik.http.middlewares.plex-https-redirect.redirectscheme.scheme=https"
       - "traefik.docker.network=traefik-net"
-      - "traefik.http.routers.plex.middlewares=secured@file"
+      - "traefik.http.routers.plex.middlewares=rate-limit@file"
 
 
     networks:
