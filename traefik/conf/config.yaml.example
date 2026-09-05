@@ -1,24 +1,28 @@
 http:
   routers:
 
-# Apps outside of docker
+    # ------------------------------------------------------------
+    # Apps outside Docker
+    # ------------------------------------------------------------
+
     wgdashboard:
       entryPoints:
         - https
       rule: "Host(`wgdashboard.home.gonsa.org`)"
+      middlewares:
+        - ip-whitelist
       tls: {}
       service: wgdashboard
 
     nextcloud:
       entryPoints:
-        - http
         - https
       rule: "Host(`cloud.gonsa.org`)"
       tls:
         certResolver: cloudflare
       middlewares:
         - nextcloud-headers
-        - secured
+        - rate-limit
       service: nextcloud
 
     router_home:
@@ -37,6 +41,8 @@ http:
       entryPoints:
         - https
       rule: "Host(`pi-hole.home.gonsa.org`)"
+      middlewares:
+        - ip-whitelist
       tls: {}
       service: pi-hole
 
@@ -44,6 +50,8 @@ http:
       entryPoints:
         - https
       rule: "Host(`dietpi-hole.home.gonsa.org`)"
+      middlewares:
+        - ip-whitelist
       tls: {}
       service: dietpi-hole
 
@@ -51,6 +59,8 @@ http:
       entryPoints:
         - https
       rule: "Host(`upsnap.home.gonsa.org`)"
+      middlewares:
+        - ip-whitelist
       tls: {}
       service: upsnap
 
@@ -58,6 +68,8 @@ http:
       entryPoints:
         - https
       rule: "Host(`uptime-kuma.home.gonsa.org`)"
+      middlewares:
+        - ip-whitelist
       tls: {}
       service: uptime-kuma
 
@@ -65,24 +77,24 @@ http:
       entryPoints:
         - https
       rule: "Host(`ha.gonsa.org`)"
-      tls: {}
+      tls:
+        certResolver: cloudflare
       service: home-assistant
 
-#####################################################################################
+  # ------------------------------------------------------------
+  # Services
+  # ------------------------------------------------------------
 
-# Services for those apps
   services:
     wgdashboard:
       loadBalancer:
         servers:
           - url: "http://192.168.1.92:10086"
-        passHostHeader: true
 
     nextcloud:
       loadBalancer:
         servers:
           - url: "https://192.168.1.76"
-        passHostHeader: true
 
     router_home:
       loadBalancer:
@@ -91,6 +103,7 @@ http:
 
     fileserver_home:
       loadBalancer:
+        serversTransport: internal-insecure
         servers:
           - url: "https://192.168.1.77:12321"
 
@@ -98,47 +111,50 @@ http:
       loadBalancer:
         servers:
           - url: "http://192.168.1.98:8080/admin/"
-        passHostHeader: true
 
     dietpi-hole:
       loadBalancer:
         servers:
           - url: "http://192.168.1.88:8080/admin/"
-        passHostHeader: true
 
     upsnap:
       loadBalancer:
         servers:
           - url: "http://192.168.1.88:8090"
-        passHostHeader: true
 
     uptime-kuma:
       loadBalancer:
         servers:
           - url: "http://192.168.1.88:3001"
-        passHostHeader: true
 
     home-assistant:
       loadBalancer:
         servers:
           - url: "http://192.168.1.168:8123"
-        passHostHeader: true
-####################################################################################
 
-# All the middlewares
+  # ------------------------------------------------------------
+  # Backend TLS transports
+  # ------------------------------------------------------------
+
+  serversTransports:
+
+    internal-insecure:
+      insecureSkipVerify: true
+
+  # ------------------------------------------------------------
+  # Middlewares
+  # ------------------------------------------------------------
+
   middlewares:
 
     nextcloud-headers:
       headers:
-        hostsProxyHeaders:
-          - "X-Forwarded-Host"
-        customRequestHeaders:
         referrerPolicy: "same-origin"
 
     ip-whitelist:
       ipAllowList:
         sourceRange:
-        - "192.168.0.0/16"    # internal network
+          - "192.168.0.0/16"
 
     rate-limit:
       rateLimit:
@@ -146,12 +162,6 @@ http:
         burst: 100   # Allow short spikes of up to 100 requests at once, before throttling kicks in
 
     crowdsec-bouncer:
-      forwardauth:
+      forwardAuth:
         address: http://bouncer-traefik:8080/api/v1/forwardAuth
         trustForwardHeader: true
-
-    secured:
-      chain:
-        middlewares:
-          - crowdsec-bouncer@file
-          - rate-limit
