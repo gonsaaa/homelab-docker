@@ -15,12 +15,7 @@
         "concurrentRequestLimit": 2
       }
     ]
-  },
+  }
 
-  "packageRules": [
-    {
-      "matchPackageNames": ["gtstef/filebrowser"],
-      "changelogUrl": "https://github.com/gtsteffaniak/filebrowser/releases"
-    }
   ]
 }
