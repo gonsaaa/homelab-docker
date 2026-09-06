@@ -82,29 +82,29 @@ services:
       - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
       - "traefik.http.services.openwebui.loadbalancer.server.port=8080"
 
-  litellm:
-    image: ghcr.io/berriai/litellm:v1.100.0
-    container_name: litellm
-    command:
-      - --config
-      - /app/config.yaml
-    environment:
-      - TZ=Europe/Lisbon
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
-      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
-      - GEMINI_API_KEY=${GEMINI_API_KEY}
-    volumes:
-      - /home/gonsa/litellm/config.yaml:/app/config.yaml:ro
-    networks:
-      - traefik-net
-    restart: always
-
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.litellm.rule=Host(`litellm.gonsa.org`)"
-      - "traefik.http.routers.litellm.entrypoints=https"
-      - "traefik.http.routers.litellm.tls.certresolver=cloudflare"
-      - "traefik.http.services.litellm.loadbalancer.server.port=4000"
+#  litellm:
+#    image: ghcr.io/berriai/litellm:v1.100.0
+#    container_name: litellm
+#    command:
+#      - --config
+#      - /app/config.yaml
+#    environment:
+#      - TZ=Europe/Lisbon
+#      - OPENAI_API_KEY=${OPENAI_API_KEY}
+#      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+#      - GEMINI_API_KEY=${GEMINI_API_KEY}
+#    volumes:
+#      - /home/gonsa/litellm/config.yaml:/app/config.yaml:ro
+#    networks:
+#      - traefik-net
+#    restart: always
+#
+#    labels:
+#      - "traefik.enable=true"
+#      - "traefik.http.routers.litellm.rule=Host(`litellm.gonsa.org`)"
+#      - "traefik.http.routers.litellm.entrypoints=https"
+#      - "traefik.http.routers.litellm.tls.certresolver=cloudflare"
+#      - "traefik.http.services.litellm.loadbalancer.server.port=4000"
 
 networks:
   traefik-net:
