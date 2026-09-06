@@ -21,6 +21,8 @@ services:
       # Logos / custom images
       - /nfs/share/data/pingvin-share-x/data/images:/opt/app/frontend/public/img
 
+      - /nfs/share/data/pingvin-share-x/data/config.yaml:/opt/app/config.yaml:ro
+
     networks:
       - traefik-net
 
