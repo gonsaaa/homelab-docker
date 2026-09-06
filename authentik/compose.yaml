@@ -52,8 +52,8 @@ services:
       AUTHENTIK_ACCESS_TOKEN_EXPIRATION: 48h
       AUTHENTIK_REFRESH_TOKEN_EXPIRATION: 720h
     volumes:
-      - ./media:/media
-      - ./custom-templates:/templates
+      - /nfs/share/data/authentik/media:/media
+      - /nfs/share/data/authentik/custom-templates:/templates
       - type: tmpfs
         target: /dev/shm/authentik_prometheus_tmp
         tmpfs:
@@ -100,9 +100,9 @@ services:
       TZ: Europe/Lisbon
     user: root
     volumes:
-      - ./media:/media
-      - ./certs:/certs
-      - ./custom-templates:/templates
+      - /nfs/share/data/authentik/media:/media
+      - /nfs/share/data/authentik/certs:/certs
+      - /nfs/share/data/authentik/custom-templates:/templates
       - type: tmpfs
         target: /dev/shm/authentik_prometheus_tmp
         tmpfs:
