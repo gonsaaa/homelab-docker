@@ -1,0 +1,11 @@
+# To use only if we get locked out of the app
+
+general:
+  appUrl: "https://$URL"
+
+oauth:
+  disablePassword: "false"
+  oidc-enabled: "false"
+
+initUser:
+  enabled: false
