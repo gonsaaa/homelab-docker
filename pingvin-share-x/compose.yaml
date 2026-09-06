@@ -21,6 +21,7 @@ services:
       # Logos / custom images
       - /nfs/share/data/pingvin-share-x/data/images:/opt/app/frontend/public/img
 
+      # Override configs
      # - /nfs/share/data/pingvin-share-x/data/config.yaml:/opt/app/config.yaml:ro
 
     networks:
