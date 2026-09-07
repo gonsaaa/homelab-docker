@@ -1,5 +1,6 @@
 services:
   app:
+    container_name: kitchenboard
     image: g33kphr33k/kitchenboard:0.1.0
     restart: unless-stopped
     #ports:
