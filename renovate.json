@@ -115,7 +115,18 @@
         "linuxserver/wireguard"
       ],
       "minimumReleaseAge": "3 days"
-}
+    },
+    
+    {
+      "description": "Handle LinuxServer qBittorrent version tags",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": [
+        "lscr.io/linuxserver/qbittorrent",
+        "docker.io/linuxserver/qbittorrent",
+        "linuxserver/qbittorrent"
+      ],
+      "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)_v\\d+\\.\\d+\\.(?<build>\\d+)-ls(?<revision>\\d+)$"
+    }
     
   ]
   
