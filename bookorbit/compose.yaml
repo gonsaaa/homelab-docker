@@ -1,0 +1,107 @@
+name: bookorbit
+
+services:
+  app:
+    container_name: bookorbit-app
+    image: ghcr.io/bookorbit/bookorbit:v2.9.0 
+    restart: unless-stopped
+    init: true
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: production
+      PORT: ${PORT:-3002}
+      DATABASE_URL: ${DATABASE_URL:-}
+      POSTGRES_HOST: ${POSTGRES_HOST:-postgres}
+      POSTGRES_PORT: ${POSTGRES_PORT:-5432}
+      POSTGRES_USER: ${POSTGRES_USER?required}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD?required}
+      POSTGRES_DB: ${POSTGRES_DB?required}
+      JWT_SECRET: ${JWT_SECRET?required}
+      SETUP_BOOTSTRAP_TOKEN: ${SETUP_BOOTSTRAP_TOKEN?required}
+      APP_URL: ${APP_URL?required}
+      CLIENT_URL: ${CLIENT_URL:-${APP_URL?required}}
+      PUID: ${PUID:-1000}
+      PGID: ${PGID:-1000}
+      NODE_MAX_OLD_SPACE_SIZE: ${NODE_MAX_OLD_SPACE_SIZE:-auto}
+      BOOK_DOCK_PATH: ${BOOK_DOCK_PATH:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - /nfs/share/data/bookorbit/books:/books
+      - /nfs/share/data/bookorbit/data/app:/data
+      - /nfs/share/data/calibre-web/library:/calibre
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - DAC_OVERRIDE
+      - FOWNER
+      - SETGID
+      - SETUID
+    security_opt:
+      - no-new-privileges:true
+    stop_grace_period: 30s
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "const p=process.env.PORT||3002;fetch('http://127.0.0.1:'+p+'/api/v1/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    networks:
+      - default
+      - traefik-net
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik-net"
+      - "traefik.http.services.bookorbit.loadbalancer.server.port=3002"
+
+      # bookorbit - Local only (no auth)
+      - "traefik.http.routers.bookorbit-home.rule=Host(`bookorbit.home.gonsa.org`)"
+      - "traefik.http.routers.bookorbit-home.entrypoints=https"
+      - "traefik.http.routers.bookorbit-home.tls.certresolver=cloudflare"
+      - "traefik.http.routers.bookorbit-home.service=bookorbit"
+
+      # bookorbit - External (with auth)
+      - "traefik.http.routers.bookorbit.rule=Host(`bookorbit.gonsa.org`)"
+      - "traefik.http.routers.bookorbit.entrypoints=https"
+      - "traefik.http.routers.bookorbit.tls.certresolver=cloudflare"
+      - "traefik.http.routers.bookorbit.service=bookorbit"
+
+      # HTTP redirect
+      - "traefik.http.routers.bookorbit-http.entrypoints=http"
+      - "traefik.http.routers.bookorbit-http.rule=Host(`bookorbit.gonsa.org`) || Host(`bookorbit.home.gonsa.org`)"
+      - "traefik.http.routers.bookorbit-http.middlewares=redirect-to-https"
+
+  postgres:
+    container_name: bookorbit-db
+    image: pgvector/pgvector:pg16@sha256:7d400e340efb42f4d8c9c12c6427adb253f726881a9985d2a471bf0eed824dff
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER?required}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD?required}
+      POSTGRES_DB: ${POSTGRES_DB?required}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - /nfs/share/data/bookorbit/data/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        ["CMD-SHELL", 'pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"']
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+networks:
+  traefik-net:
+    external: true
