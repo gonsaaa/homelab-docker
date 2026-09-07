@@ -7,7 +7,7 @@ services:
     #  - "8743:8000"
     env_file: .env
     volumes:
-      - /nfs/share/data/komodo/repos/homelab-docker/kitchenboard:/data
+      - /nfs/share/data/kitchenboard:/data
       
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
@@ -27,7 +27,7 @@ services:
       - "traefik.http.routers.kitchenboard-home.service=kitchenboard"
 
       # myservice - External
-      - "traefik.http.routers.kitchenboard.rule=Host(`myservice.gonsa.org`)"
+      - "traefik.http.routers.kitchenboard.rule=Host(`kitchenboard.gonsa.org`)"
       - "traefik.http.routers.kitchenboard.entrypoints=https"
       - "traefik.http.routers.kitchenboard.tls.certresolver=cloudflare"
       - "traefik.http.routers.kitchenboard.service=kitchenboard"
