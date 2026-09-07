@@ -86,7 +86,7 @@ services:
 
 
   qbittorrent:
-    image: lscr.io/linuxserver/qbittorrent:5.2.2_v2.0.13-ls464
+    image: lscr.io/linuxserver/qbittorrent:5.2.3_v2.0.14-ls475
     container_name: qbittorrent
 
     network_mode: "service:wireguard"
