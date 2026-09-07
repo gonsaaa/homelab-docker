@@ -1,0 +1,43 @@
+services:
+  app:
+    image: g33kphr33k/kitchenboard:0.1.0
+    restart: unless-stopped
+    #ports:
+    #  - "8743:8000"
+    env_file: .env
+    volumes:
+      - /nfs/share/data/komodo/repos/homelab-docker/kitchenboard:/data
+      
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+      labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.kitchenboard.loadbalancer.server.port=8000"
+      
+      # myservice - Local
+      - "traefik.http.routers.kitchenboard-home.rule=Host(`kitchenboard.home.gonsa.org`)"
+      - "traefik.http.routers.kitchenboard-home.entrypoints=https"
+      - "traefik.http.routers.kitchenboard-home.tls.certresolver=cloudflare"
+      - "traefik.http.routers.kitchenboard-home.service=kitchenboard"
+
+      # myservice - External
+      - "traefik.http.routers.kitchenboard.rule=Host(`myservice.gonsa.org`)"
+      - "traefik.http.routers.kitchenboard.entrypoints=https"
+      - "traefik.http.routers.kitchenboard.tls.certresolver=cloudflare"
+      - "traefik.http.routers.kitchenboard.service=kitchenboard"
+
+      # HTTP redirects for both domains
+      - "traefik.http.routers.kitchenboard-http.entrypoints=http"
+      - "traefik.http.routers.kitchenboard-http.rule=Host(`kitchenboard.gonsa.org`) || Host(`kitchenboard.home.gonsa.org`)"
+      - "traefik.http.routers.kitchenboard-http.middlewares=redirect-to-https"
+    networks:
+      - traefik-net
+
+networks:
+  traefik-net:
+    external: true
