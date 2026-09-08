@@ -11,7 +11,7 @@
   "configMigration": true,
   "prHourlyLimit": 0,
 
-  "prBodyTemplate": "{{{table}}}\n\n{{{changelogs}}}",
+  "prBodyTemplate": "### Container update\n\n{{{table}}}",
 
   "docker-compose": {
     "hostRules": [
