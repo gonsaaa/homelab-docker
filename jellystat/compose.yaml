@@ -12,7 +12,7 @@ services:
     - /nfs/share/data/jellystat/postgres-data:/var/lib/postgresql/data
     restart: unless-stopped
   jellystat:
-    image: cyfershepard/jellystat:1.1.11
+    image: cyfershepard/jellystat:1.1.12
     container_name: jellystat
     environment:
       POSTGRES_USER: postgres
