@@ -126,6 +126,16 @@
         "linuxserver/qbittorrent"
       ],
       "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)_v\\d+\\.\\d+\\.(?<build>\\d+)-ls(?<revision>\\d+)$"
+    },
+
+    {
+      "description": "Handle Jellyfin version tags",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": [
+        "docker.io/jellyfin/jellyfin",
+        "jellyfin/jellyfin"
+      ],
+      "versioning": "semver-coerced"
     }
     
   ]
