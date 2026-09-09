@@ -1,0 +1,50 @@
+services:
+  foxy:
+    image: lscr.io/linuxserver/firefox:latest
+    container_name: foxy
+
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Lisbon
+
+      # Clipboard
+      - SELKIES_CLIPBOARD_ENABLED=true
+      - SELKIES_CLIPBOARD_IN_ENABLED=true
+      - SELKIES_CLIPBOARD_OUT_ENABLED=true
+
+      # Optional: don't need the clipboard sidebar
+      - SELKIES_UI_SIDEBAR_SHOW_CLIPBOARD=false
+
+    volumes:
+      - /nfs/share/data/foxy:/config
+
+    mem_limit: 4g
+    memswap_limit: 8g
+
+    shm_size: "1gb"
+
+    tmpfs:
+      - /tmp:size=1g,mode=1777
+
+    restart: unless-stopped
+
+    labels:
+      - "traefik.enable=true"
+
+      - "traefik.http.routers.foxy.rule=Host(`foxy.gonsa.org`)"
+      - "traefik.http.routers.foxy.entrypoints=https"
+      - "traefik.http.routers.foxy.tls=true"
+      - "traefik.http.routers.foxy.tls.certresolver=cloudflare"
+
+      - "traefik.http.routers.foxy.middlewares=rate-limit@file,authentik@file"
+
+      - "traefik.http.services.foxy.loadbalancer.server.port=3000"
+      - "traefik.http.services.foxy.loadbalancer.server.scheme=http"
+
+    networks:
+      - traefik-net
+
+networks:
+  traefik-net:
+    external: true
