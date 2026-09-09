@@ -1,7 +1,7 @@
 # Self-hosted service to sync your plex, jellyfin and emby play state. without relying on 3rd-party external services.
 services:
     watchstate:
-        image: ghcr.io/arabcoders/watchstate:latest
+        image: ghcr.io/arabcoders/watchstate:1.10.5
         # To change the user/group id associated with the tool change the following line.
         user: "${UID:-1000}:${GID:-1000}"
         container_name: watchstate
