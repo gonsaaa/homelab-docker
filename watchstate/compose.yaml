@@ -5,6 +5,7 @@ services:
         # To change the user/group id associated with the tool change the following line.
         user: "${UID:-1000}:${GID:-1000}"
         container_name: watchstate
+        network_mode: bridge
         restart: unless-stopped
         ports:
             - "8092:8080" # The port which the webui will be available on.
