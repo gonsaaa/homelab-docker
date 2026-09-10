@@ -7,6 +7,6 @@ services:
     volumes:
       - /nfs/share/data/pulsarr/data:/app/data
       - /nfs/share/data/pulsarr/env:/app/.env
-    restart: unless-stopped
+  #  restart: unless-stopped
     env_file:
       - .env
