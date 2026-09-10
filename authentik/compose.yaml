@@ -37,7 +37,7 @@ services:
       traefik-net:
 
   server:
-    image: ghcr.io/goauthentik/server:2026.8.1
+    image: ghcr.io/goauthentik/server:2026.8.2
     container_name: authentik-server
     restart: unless-stopped
     command: server
@@ -84,7 +84,7 @@ services:
       traefik-net:
 
   worker:
-    image: ghcr.io/goauthentik/server:2026.8.1
+    image: ghcr.io/goauthentik/server:2026.8.2
     container_name: authentik-worker
     restart: unless-stopped
     command: worker
