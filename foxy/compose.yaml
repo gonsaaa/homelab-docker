@@ -1,6 +1,6 @@
 services:
   foxy:
-    image: lscr.io/linuxserver/firefox:latest
+    image: lscr.io/linuxserver/firefox:1155.0build1-1xtradeb2.2404.1-ls119
     container_name: foxy
 
     environment:
