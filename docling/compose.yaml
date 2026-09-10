@@ -2,7 +2,7 @@ services:
   docling:  
     image: quay.io/docling-project/docling-serve:v1.32.0  
     container_name: docling  
-    restart: unless-stopped  
+   # restart: unless-stopped  
     networks:  
       - traefik-net  
     volumes:  
