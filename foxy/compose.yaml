@@ -13,6 +13,10 @@ services:
       - SELKIES_CLIPBOARD_IN_ENABLED=true
       - SELKIES_CLIPBOARD_OUT_ENABLED=true
 
+      #Credentials
+      - CUSTOM_USER=${FIREFOX_USER}
+      - PASSWORD=${FIREFOX_PASSWORD}
+
       # Optional: don't need the clipboard sidebar
       - SELKIES_UI_SIDEBAR_SHOW_CLIPBOARD=false
 
