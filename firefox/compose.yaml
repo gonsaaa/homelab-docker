@@ -24,7 +24,7 @@ services:
       - WEB_AUTHENTICATION_PASSWORD=${WEB_AUTHENTICATION_PASSWORD}
       - SECURE_CONNECTION=1
       #- SECURE_CONNECTION_VNC_METHOD=SSL
-    restart: always
+  #  restart: always
 
     labels:
       - "traefik.enable=true"
