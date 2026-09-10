@@ -1,0 +1,12 @@
+services:
+  pulsarr:
+    image: lakker/pulsarr:0.19.2
+    container_name: pulsarr
+    ports:
+      - "3003:3003"
+    volumes:
+      - /nfs/share/data/pulsarr/data:/app/data
+      - /nfs/share/data/pulsarr/env:/app/.env
+    restart: unless-stopped
+    env_file:
+      - .env
