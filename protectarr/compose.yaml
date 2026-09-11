@@ -16,7 +16,7 @@ services:
     environment:
       # Prefer secrets via env over writing them into config.yaml.
       # qBittorrent >= 5.2.0: use an API key…
-      - PROTECTARR_QBIT_API_KEY=${QBIT_API_KEY:-}
+      #- PROTECTARR_QBIT_API_KEY=${QBIT_API_KEY:-}
       # …or fall back to username/password on older versions:
       #- PROTECTARR_QBIT_PASSWORD=${QBIT_PASSWORD:-}
     # Protectarr must reach qBittorrent + your *arr apps. If they run in this
