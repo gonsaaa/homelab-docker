@@ -13,7 +13,7 @@ services:
       # - ./blocklist:/blocklist        # and in qBittorrent: - ./blocklist:/blocklist
     env_file:
       - .env
-    environment:
+    #environment:
       # Prefer secrets via env over writing them into config.yaml.
       # qBittorrent >= 5.2.0: use an API key…
       #- PROTECTARR_QBIT_API_KEY=${QBIT_API_KEY:-}
