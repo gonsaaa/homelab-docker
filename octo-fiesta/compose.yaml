@@ -1,6 +1,6 @@
 services:
   octo-fiesta:
-    image: ghcr.io/v1ck3s/octo-fiesta:0.11
+    image: ghcr.io/v1ck3s/octo-fiesta:v0.11
     container_name: octo-fiesta
     restart: unless-stopped
     
