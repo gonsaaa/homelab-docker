@@ -1,6 +1,6 @@
 services:
   navidrome:
-    image: deluan/navidrome:v0.63.2
+    image: deluan/navidrome:0.63.2
     
     user: 1000:1000 # must own the data folder and be able to read music folder(s). See Permissions below
    # ports:
