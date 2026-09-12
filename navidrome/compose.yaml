@@ -12,6 +12,9 @@ services:
       # ND_LOGLEVEL: debug
       ND_BASEURL: ${ND_BASEURL}
       ND_COVERARTPRIORITY: "cover.*, folder.*, front.*, embedded, external"
+      ND_PLUGINS_ENABLED: true
+      ND_PLUGINS_AUTORELOAD: true
+      ND_AGENTS: "coverartarchive,deezer,lastfm,listenbrainz"
     
     volumes:
       - "/nfs/share/data/navidrome:/data"
