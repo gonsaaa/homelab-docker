@@ -1,0 +1,44 @@
+services:
+  navidrome:
+    image: deluan/navidrome:latest
+    
+    user: 1000:1000 # must own the data folder and be able to read music folder(s). See Permissions below
+   # ports:
+   #   - "4533:4533"
+    restart: unless-stopped
+    
+    environment:
+      # Optional: put your config options customization here. Examples:
+      # ND_LOGLEVEL: debug
+      ND_BASEURL=https://navidrome.gonsa.org
+    
+    volumes:
+      - "/nfs/share/data/navidrome:/data"
+      - "/nfs/share/mp3:/music:ro"
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.navidrome.loadbalancer.server.port=4533"
+      
+      # myservice - Local
+      - "traefik.http.routers.navidrome-home.rule=Host(`navidrome.home.gonsa.org`)"
+      - "traefik.http.routers.navidrome-home.entrypoints=https"
+      - "traefik.http.routers.navidrome-home.tls.certresolver=cloudflare"
+      - "traefik.http.routers.navidrome-home.service=navidrome"
+
+      # myservice - External
+      - "traefik.http.routers.navidrome.rule=Host(`navidrome.gonsa.org`)"
+      - "traefik.http.routers.navidrome.entrypoints=https"
+      - "traefik.http.routers.navidrome.tls.certresolver=cloudflare"
+      - "traefik.http.routers.navidrome.service=navidrome"
+
+      # HTTP redirects for both domains
+      - "traefik.http.routers.navidrome-http.entrypoints=http"
+      - "traefik.http.routers.navidrome-http.rule=Host(`navidrome.gonsa.org`) || Host(`navidrome.home.gonsa.org`)"
+      - "traefik.http.routers.navidrome-http.middlewares=redirect-to-https"
+    networks:
+      - traefik-net
+
+networks:
+  traefik-net:
+    external: true
