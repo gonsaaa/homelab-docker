@@ -11,6 +11,7 @@ services:
       # Optional: put your config options customization here. Examples:
       # ND_LOGLEVEL: debug
       ND_BASEURL: ${ND_BASEURL}
+      ND_COVERARTPRIORITY: "cover.*, folder.*, front.*, embedded, external"
     
     volumes:
       - "/nfs/share/data/navidrome:/data"
