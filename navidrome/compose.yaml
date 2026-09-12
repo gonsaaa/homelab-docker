@@ -1,6 +1,6 @@
 services:
   navidrome:
-    image: deluan/navidrome:latest
+    image: deluan/navidrome:v0.63.2
     
     user: 1000:1000 # must own the data folder and be able to read music folder(s). See Permissions below
    # ports:
@@ -10,7 +10,7 @@ services:
     environment:
       # Optional: put your config options customization here. Examples:
       # ND_LOGLEVEL: debug
-      ND_BASEURL=https://navidrome.gonsa.org
+      ND_BASEURL: ${ND_BASEURL}
     
     volumes:
       - "/nfs/share/data/navidrome:/data"
