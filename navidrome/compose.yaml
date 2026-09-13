@@ -21,7 +21,7 @@ services:
       ND_DEVARTISTINFOTIMETOLIVE: 1s
     
     volumes:
-      - "/nfs/share/data/navidrome:/data"
+      - "/home/gonsa/navidrome:/data"
       - "/nfs/share/mp3:/music:ro"
 
     labels:
