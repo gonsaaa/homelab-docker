@@ -9,14 +9,14 @@ services:
     restart: unless-stopped
     
     environment:
+      TZ: Europe/Lisbon
       # Optional: put your config options customization here. Examples:
       # ND_LOGLEVEL: debug
       ND_BASEURL: ${ND_BASEURL}
       ND_COVERARTPRIORITY: "cover.*, folder.*, front.*, embedded, external"
-      ND_PLUGINS_ENABLED: false
-      ND_PLUGINS_AUTORELOAD: false
-      #ND_AGENTS: "artist-nfo-metadata,coverartarchive,audiomuseai,apple-music,deezer,lastfm,listenbrainz"
-      ND_AGENTS: "deezer,lastfm,listenbrainz"
+      ND_PLUGINS_ENABLED: true
+      ND_PLUGINS_AUTORELOAD: true
+      ND_AGENTS: "artist-nfo-metadata,coverartarchive,audiomuseai,apple-music,deezer,lastfm,listenbrainz"
       ND_LYRICSPRIORITY: "navidrome-musixmatch-plugin,nd-lyrics,.ttml,.yaml,.yml,.elrc,.lrc,.srt,.txt,embedded"
       ND_DEVARTISTINFOTIMETOLIVE: 1s
     
