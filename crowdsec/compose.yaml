@@ -82,8 +82,8 @@ services:
 #      - traefik-net
 #    depends_on:
 #       - crowdsec
+#    restart: unless-stopped
 
-    restart: unless-stopped
     security_opt:
       - no-new-privileges:true
 volumes:
