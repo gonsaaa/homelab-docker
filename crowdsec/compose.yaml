@@ -64,24 +64,24 @@ services:
     restart: unless-stopped
 
 
-  bouncer-traefik:
-    image: docker.io/fbonalair/traefik-crowdsec-bouncer:latest
-    container_name: bouncer-traefik
-    environment:
-      TZ: Europe/Lisbon
-      CROWDSEC_BOUNCER_API_KEY: ${CROWDSEC_BOUNCER_API_KEY}
-      CROWDSEC_AGENT_HOST: crowdsec:8080
-
-    logging:               # capping huge logs
-      driver: json-file
-      options:
-        max-size: "10m"
-        max-file: "3"
-
-    networks:
-      - traefik-net
-    depends_on:
-       - crowdsec
+#  bouncer-traefik:
+#    image: docker.io/fbonalair/traefik-crowdsec-bouncer:latest
+#    container_name: bouncer-traefik
+#    environment:
+#      TZ: Europe/Lisbon
+#      CROWDSEC_BOUNCER_API_KEY: ${CROWDSEC_BOUNCER_API_KEY}
+#      CROWDSEC_AGENT_HOST: crowdsec:8080
+#
+#    logging:               # capping huge logs
+#      driver: json-file
+#      options:
+#        max-size: "10m"
+#        max-file: "3"
+#
+#    networks:
+#      - traefik-net
+#    depends_on:
+#       - crowdsec
 
     restart: unless-stopped
     security_opt:
