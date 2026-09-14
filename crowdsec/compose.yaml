@@ -36,20 +36,8 @@ services:
     security_opt:
       - no-new-privileges:true
     restart: unless-stopped
-#    labels:
-#      - "traefik.enable=true"
-#      - "traefik.http.routers.crowdsec.rule=Host(`crowdsec.gonsa.org`)"
-#      - "traefik.http.routers.crowdsec.entrypoints=https"
-#      - "traefik.http.routers.crowdsec.tls=true"
-#      - "traefik.http.routers.crowdsec.tls.certresolver=cloudflare"
-#      - "traefik.http.services.crowdsec.loadbalancer.server.port=8080"
-     # Redirect http to https:
-#      - "traefik.http.routers.crowdsec-http.entrypoints=http"
-#      - "traefik.http.routers.crowdsec-http.rule=Host(`crowdsec.gonsa.org`)"
-#      - "traefik.http.routers.crowdsec-http.middlewares=crowdsec-https-redirect"
-#      - "traefik.http.middlewares.crowdsec-https-redirect.redirectscheme.scheme=https"
 
-
+  
   crowdsec-db:
     image: postgres:15-alpine
     container_name: crowdsec-db
@@ -62,27 +50,6 @@ services:
     networks:
       - traefik-net
     restart: unless-stopped
-
-
-#  bouncer-traefik:
-#    image: docker.io/fbonalair/traefik-crowdsec-bouncer:latest
-#    container_name: bouncer-traefik
-#    environment:
-#      TZ: Europe/Lisbon
-#      CROWDSEC_BOUNCER_API_KEY: ${CROWDSEC_BOUNCER_API_KEY}
-#      CROWDSEC_AGENT_HOST: crowdsec:8080
-#
-#    logging:               # capping huge logs
-#      driver: json-file
-#      options:
-#        max-size: "10m"
-#        max-file: "3"
-#
-#    networks:
-#      - traefik-net
-#    depends_on:
-#       - crowdsec
-#    restart: unless-stopped
 
     security_opt:
       - no-new-privileges:true
