@@ -1,6 +1,6 @@
 services:
   protectarr:
-    image: ghcr.io/irnutsmurt/protectarr:0.3.0
+    image: ghcr.io/irnutsmurt/protectarr:0.4.0
     # build: .   # uncomment to build from source instead of pulling the image
     container_name: protectarr
     restart: unless-stopped
