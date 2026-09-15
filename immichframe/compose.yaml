@@ -2,7 +2,7 @@ name: immichframe
 services:
   immichframe:
     container_name: immichframe
-    image: ghcr.io/immichframe/immichframe:v1.0.37.0
+    image: ghcr.io/immichframe/immichframe:v1.0.38.0
     network_mode: bridge
     restart: on-failure
     ports:
