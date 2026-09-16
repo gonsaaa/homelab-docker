@@ -15,30 +15,6 @@ services:
     networks:
       - traefik-net
 
-  grafana:
-    image: grafana/grafana:13.2.2
-    container_name: grafana
-    restart: unless-stopped
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=${GF_SECURITY_ADMIN_PASSWORD}
-      - GF_USERS_ALLOW_SIGN_UP=false
-    volumes:
-      - /nfs/share/data/grafana:/var/lib/grafana
-      - /nfs/share/data/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
-      - /nfs/share/data/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards:ro
-      - /nfs/share/data/grafana/dashboards:/var/lib/grafana/dashboards:ro
-    networks:
-      - traefik-net
-    labels:
-      # Expose Grafana behind Traefik on your usual domain
-      - "traefik.enable=true"
-      - "traefik.http.routers.grafana.rule=Host(`grafana.gonsa.org`)"
-      - "traefik.http.routers.grafana.entrypoints=https"
-      - "traefik.http.routers.grafana.tls=true"
-
 networks:
   traefik-net:
     external: true
