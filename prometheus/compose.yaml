@@ -10,8 +10,8 @@ services:
       - --storage.tsdb.path=/prometheus
       - --web.enable-lifecycle
     volumes:
-      - /nfs/share/data/prometheus:/prometheus
-      - /nfs/share/data/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - /home/gonsa/prometheus-data:/prometheus
+      - /home/gonsa/prometheus-data/prometheus.yml:/etc/prometheus/prometheus.yml:ro
     networks:
       - traefik-net
 
