@@ -1,6 +1,6 @@
 services:
   pingvin-share-x:
-    image: ghcr.io/smp46/pingvin-share-x:v1.22.2
+    image: ghcr.io/smp46/pingvin-share-x:v1.22.3
     container_name: pingvin-share-x
     restart: unless-stopped
 
