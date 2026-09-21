@@ -1,6 +1,6 @@
 services:
   kometa:
-    image: kometateam/kometa:v2.4.8
+    image: kometateam/kometa:v2.5.0
     container_name: kometa
     environment:
       - KOMETA_RUN=true 
