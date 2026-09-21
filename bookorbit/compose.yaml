@@ -32,6 +32,7 @@ services:
       - /nfs/share/data/bookorbit/books:/books
       - /nfs/share/data/bookorbit/data/app:/data
       - /nfs/share/data/calibre-web/library:/calibre
+      - /nfs/share/data/downloads:/downloads
     read_only: true
     tmpfs:
       - /tmp
