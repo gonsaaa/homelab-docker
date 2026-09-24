@@ -129,7 +129,7 @@ services:
       - "traefik.http.services.paperless.loadbalancer.server.port=8000"
 
   protonmail-bridge:
-    image: ghcr.io/videocurio/proton-mail-bridge:latest
+    image: ghcr.io/videocurio/proton-mail-bridge:3.24.2
     container_name: proton-bridge
 #    ports:
 #      - 1025:25/tcp
