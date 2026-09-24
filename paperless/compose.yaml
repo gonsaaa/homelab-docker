@@ -48,13 +48,10 @@ services:
       PAPERLESS_CSRF_TRUSTED_ORIGINS: https://paperless.gonsa.org,https://paperless.home.gonsa.org
       TZ: Europe/Lisbon
       #tuning after debian 13
-      # Celery tuning (reduce forking & memory churn)
-      CELERY_WORKER_CONCURRENCY: "2"     # cap workers
-      CELERY_WORKER_POOL: "threads"      # use threads pool instead of prefork
-      CELERY_WORKER_MAX_TASKS_PER_CHILD: "20"  # recycle to avoid leaks
+      # Background task concurrency
+      PAPERLESS_TASK_WORKERS: "1"
       CELERY_BROKER_HEARTBEAT: "0"
       CELERY_BROKER_POOL_LIMIT: "2"
-      # (Paperless already forces OMP_THREAD_LIMIT=1 internally, but safe to pin too)
       OMP_NUM_THREADS: "1"
       PAPERLESS_EMAIL_TASK_CRON: "*/5 * * * *"  # Check every 5 minutes
       PAPERLESS_EMAIL_TASK_DELETE_MAIL: false    # Don't delete emails
