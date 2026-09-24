@@ -79,7 +79,7 @@ services:
       PAPERLESS_TIME_ZONE: Europe/Lisbon
 # The default language to use for OCR. Set this to the language most of your
 # documents are written in.
-      PAPERLESS_OCR_LANGUAGE: por
+      PAPERLESS_OCR_LANGUAGE: por+eng
       PAPERLESS_REDIRECT_LOGIN_TO_SSO: false  # Don't auto-redirect to Authentik
       PAPERLESS_DISABLE_REGULAR_LOGIN: false   # Allow local username/password
       PAPERLESS_ADMIN_USER: gonsa
@@ -93,15 +93,15 @@ services:
       # LLM - Ollama
       PAPERLESS_AI_LLM_BACKEND: ollama
       PAPERLESS_AI_LLM_ENDPOINT: http://ollama:11434
-      PAPERLESS_AI_LLM_MODEL: qwen3:8b
+      PAPERLESS_AI_LLM_MODEL: qwen3.5:9b
       PAPERLESS_AI_LLM_CONTEXT_SIZE: "8192"
       PAPERLESS_AI_LLM_REQUEST_TIMEOUT: "300"
-      PAPERLESS_AI_LLM_ALLOW_INTERNAL_ENDPOINTS: "true"
+      PAPERLESS_AI_LLM_OUTPUT_LANGUAGE: English
 
       # RAG / semantic search / document chat
       PAPERLESS_AI_LLM_EMBEDDING_BACKEND: ollama
       PAPERLESS_AI_LLM_EMBEDDING_ENDPOINT: http://ollama:11434
-      PAPERLESS_AI_LLM_EMBEDDING_MODEL: embeddinggemma
+      PAPERLESS_AI_LLM_EMBEDDING_MODEL: embeddinggemma:latest
       PAPERLESS_AI_LLM_EMBEDDING_CHUNK_SIZE: "1024"
 
     labels:
