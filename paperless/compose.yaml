@@ -87,6 +87,23 @@ services:
       PAPERLESS_APPS: allauth.socialaccount.providers.openid_connect
       PAPERLESS_SOCIALACCOUNT_PROVIDERS: ${PAPERLESS_SOCIALACCOUNT_PROVIDERS}
 
+      # Native Paperless-ngx AI
+      PAPERLESS_AI_ENABLED: "true"
+
+      # LLM - Ollama
+      PAPERLESS_AI_LLM_BACKEND: ollama
+      PAPERLESS_AI_LLM_ENDPOINT: http://ollama:11434
+      PAPERLESS_AI_LLM_MODEL: qwen3:8b
+      PAPERLESS_AI_LLM_CONTEXT_SIZE: "8192"
+      PAPERLESS_AI_LLM_REQUEST_TIMEOUT: "300"
+      PAPERLESS_AI_LLM_ALLOW_INTERNAL_ENDPOINTS: "true"
+
+      # RAG / semantic search / document chat
+      PAPERLESS_AI_LLM_EMBEDDING_BACKEND: ollama
+      PAPERLESS_AI_LLM_EMBEDDING_ENDPOINT: http://ollama:11434
+      PAPERLESS_AI_LLM_EMBEDDING_MODEL: embeddinggemma
+      PAPERLESS_AI_LLM_EMBEDDING_CHUNK_SIZE: "1024"
+
     labels:
       - "traefik.enable=true"
       #Home
@@ -124,37 +141,7 @@ services:
     volumes:
       - /nfs/share/data/proton-bridge:/root
 
-  paperless-ai:
-    image: clusterzx/paperless-ai
-    container_name: paperless-ai
-    networks:
-      - traefik-net
-      
-    depends_on:
-    - webserver
-    
-    restart: unless-stopped
-    cap_drop:
-      - ALL
-    security_opt:
-      - no-new-privileges=true
-    environment:
-      - PAPERLESS_AI_PORT=3000
-      - RAG_SERVICE_URL=http://paperless-server:8000
-      - RAG_SERVICE_ENABLED=true
-      - PAPERLESS_API_URL=http://paperless-server:8000/api
-      - PAPERLESS_API_TOKEN=${PAPERLESS_API_TOKEN}
-   # ports:
-   #   - "3000:3000"
-    volumes:
-      - /nfs/share/data/paperless-ngx/paperless-ai:/app/data
-
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.paperless-ai.rule=Host(`paperless-ai.gonsa.org`)"
-      - "traefik.http.routers.paperless-ai.entrypoints=https"
-      - "traefik.http.routers.paperless-ai.tls.certresolver=cloudflare"
-      - "traefik.http.services.paperless-ai.loadbalancer.server.port=3000"
+  
 
 networks:
   traefik-net:
