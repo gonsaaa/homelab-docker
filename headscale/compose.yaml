@@ -1,0 +1,58 @@
+services:
+  headscale:
+    image: docker.io/headscale/headscale:0.29.4
+    restart: unless-stopped
+    container_name: headscale
+    networks:
+      - traefik-net
+ #   ports:
+ #     - "127.0.0.1:8080:8080"
+ #     - "127.0.0.1:9090:9090"
+    volumes:
+      - /nfs/share/data/headscale/config:/etc/headscale
+      - /nfs/share/data/headscale/lib:/var/lib/headscale
+      - /nfs/share/data/headscale/run:/var/run/headscale
+    command: serve
+    labels:
+      - 'me.tale.headplane.target=headscale'   # required for Docker integration
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.headscale-rtr.rule=Host(`headscale.gonsa.org`)'
+      - 'traefik.http.routers.headscale-rtr.entrypoints=https'
+      - 'traefik.http.routers.headscale-rtr.tls.certresolver=cloudflare'
+      - 'traefik.http.services.headscale-svc.loadbalancer.server.port=8080'
+      - 'traefik.docker.network=traefik-net'
+      - 'traefik.http.routers.headscale-rtr.middlewares=cors'
+      - 'traefik.http.middlewares.cors.headers.accesscontrolallowheaders=*'
+      - 'traefik.http.middlewares.cors.headers.accesscontrolallowmethods=GET,POST,PUT'
+      - 'traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=https://headscale.gonsa.org'
+      - 'traefik.http.middlewares.cors.headers.accesscontrolmaxage=100'
+      - 'traefik.http.middlewares.cors.headers.addvaryheader=true'
+
+  headplane:
+    image: ghcr.io/tale/headplane:0.7.1
+    container_name: headplane
+    restart: unless-stopped
+    environment:
+      - HEADPLANE_HEADSCALE__API_KEY=${HEADPLANE_HEADSCALE__API_KEY}
+    networks:
+      - traefik-net
+    volumes:
+      - /nfs/share/data/headplane/config.yaml:/etc/headplane/config.yaml
+      - /nfs/share/data/headscale/config/config.yaml:/etc/headscale/config.yaml
+      - /nfs/share/data/headplane:/var/lib/headplane
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.headplane-rtr.rule=Host(`headplane.gonsa.org`)'
+      - 'traefik.http.routers.headplane-rtr.entrypoints=https'
+      - 'traefik.http.routers.headplane-rtr.tls.certresolver=cloudflare'
+      - 'traefik.http.services.headplane-svc.loadbalancer.server.port=3000'
+      - 'traefik.docker.network=traefik-net'
+
+      # Redirect root '/' to '/admin' so React Router initialises cleanly
+      - 'traefik.http.routers.headplane-rtr.middlewares=headplane-redirect'
+      - 'traefik.http.middlewares.headplane-redirect.redirectregex.regex=^https://headplane.gonsa.org/$'
+      - 'traefik.http.middlewares.headplane-redirect.redirectregex.replacement=https://headplane.gonsa.org/admin'
+networks:
+  traefik-net:
+    external: true
