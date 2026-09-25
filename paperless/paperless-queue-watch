@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+INTERVAL="${1:-30}"
+
+while true; do
+    clear
+    date
+    echo
+
+    docker exec -i paperless-server python - <<'PY'
+import json
+from collections import Counter
+from redis import Redis
+
+r = Redis(host="broker", port=6379, db=0)
+c = Counter()
+
+for raw in r.lrange("celery", 0, -1):
+    try:
+        m = json.loads(raw)
+        c[m.get("headers", {}).get("task", "<unknown>")] += 1
+    except Exception:
+        pass
+
+print("TOTAL:", sum(c.values()))
+print()
+
+for task, count in c.most_common():
+    print(f"{count:5}  {task}")
+PY
+
+    echo
+    echo "Refreshing every ${INTERVAL}s — Ctrl+C to stop"
+    sleep "$INTERVAL"
+done
