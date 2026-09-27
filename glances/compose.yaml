@@ -1,6 +1,6 @@
 services:
   monitoring:
-    image: nicolargo/glances:4.5.6
+    image: nicolargo/glances:4.5.7
     container_name: glances
     pid: host
     network_mode: host
