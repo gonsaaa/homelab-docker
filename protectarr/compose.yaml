@@ -8,6 +8,7 @@ services:
       - "8090:8090"
     volumes:
       - /nfs/share/data/protectarr/config:/config
+      - /nfs/share/data/downloads:/data/downloads
       # For the optional IP blocklist: mount a shared volume that qBittorrent
       # ALSO mounts (at the same path), and set ip_blocklist.path to it, e.g.:
       # - ./blocklist:/blocklist        # and in qBittorrent: - ./blocklist:/blocklist
