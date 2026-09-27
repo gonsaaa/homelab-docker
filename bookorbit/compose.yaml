@@ -30,7 +30,7 @@ services:
       postgres:
         condition: service_healthy
     volumes:
-      - /nfs/share/data/bookorbit/books:/books
+      - /nfs/share/data/bookorbit/books:/books:ro
       - /nfs/share/data/bookorbit/data/app:/data
       - /nfs/share/data/downloads:/downloads
     read_only: true
