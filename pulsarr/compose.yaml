@@ -1,6 +1,6 @@
 services:
   pulsarr:
-    image: lakker/pulsarr:0.19.2
+    image: lakker/pulsarr:0.19.3
     container_name: pulsarr
     ports:
       - "3003:3003"
