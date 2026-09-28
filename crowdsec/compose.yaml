@@ -53,6 +53,52 @@ services:
 
     security_opt:
       - no-new-privileges:true
+
+  crowdsec-web-ui:
+    image: ghcr.io/theduffman85/crowdsec-web-ui:2026.9.2
+    container_name: crowdsec_web_ui
+
+    environment:
+      TZ: Europe/Lisbon
+
+      CONFIG_INSTANCE_NAME: Home CrowdSec
+      CONFIG_INSTANCE_LAPI_URL: http://crowdsec:8080
+      CONFIG_INSTANCE_LAPI_AUTH_USERNAME: ${CONFIG_INSTANCE_LAPI_AUTH_USERNAME}
+      CONFIG_INSTANCE_LAPI_AUTH_PASSWORD: ${CONFIG_INSTANCE_LAPI_AUTH_PASSWORD}
+
+      CONFIG_UI_TIME_ZONE: Europe/Lisbon
+      CONFIG_UI_TIME_FORMAT: 24h
+
+    volumes:
+      - /nfs/share/data/crowdsec-web-ui/data:/app/data
+
+    expose:
+      - "3000"
+
+    networks:
+      - traefik-net
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik-net"
+
+      - "traefik.http.routers.crowdsec-web-ui.rule=Host(`crowdsec.home.gonsa.org`)"
+      - "traefik.http.routers.crowdsec-web-ui.entrypoints=https"
+      - "traefik.http.routers.crowdsec-web-ui.tls=true"
+
+      - "traefik.http.services.crowdsec-web-ui.loadbalancer.server.port=3000"
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+    security_opt:
+      - no-new-privileges:true
+
+    restart: unless-stopped
+    
 volumes:
   crowdsec-pg-data:
 networks:
