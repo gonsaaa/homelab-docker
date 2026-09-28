@@ -1,0 +1,85 @@
+http:
+  middlewares:
+
+    geo-allow:
+      plugin:
+        geoblock:
+          silentStartUp: false
+
+          allowLocalRequests: true
+          logLocalRequests: false
+          logAllowedRequests: false
+          logApiRequests: true
+
+          api: "https://get.geojs.io/v1/ip/country/{ip}"
+          apiTimeoutMs: 750
+
+          cacheSize: 1000
+          cacheTtlSeconds: 86400
+          forceMonthlyUpdate: false
+
+          allowUnknownCountries: false
+          unknownCountryApiResponse: "nil"
+
+          # false = allowlist mode:
+          # only countries listed below are allowed.
+          blackListMode: false
+
+          addCountryHeader: true
+          httpStatusCodeDeniedRequest: 403
+
+          # Suitable for direct/DNS-only traffic.
+          # If used behind another reverse proxy such as Cloudflare,
+          # client-IP forwarding must be handled appropriately.
+          XForwardedForReverseProxy: false
+
+          countries:
+            - PT
+
+# Optional middleware; currently not attached to any active router.
+#
+# To enable on a specific Traefik router:
+#   middlewares:
+#     - geo-allow@file in /home/gonsa/traefik/conf/config.yml
+#
+# Intended mainly for DNS-only/direct-origin services where Cloudflare
+# geo restrictions do not apply.
+#
+#
+# Country codes reference for quick unblocking:
+# PT  # Portugal
+# ES  # Spain
+# FR  # France
+# DE  # Germany
+# GB  # United Kingdom
+# IT  # Italy
+# NL  # Netherlands
+# BE  # Belgium
+# DK  # Denmark
+# SE  # Sweden
+# NO  # Norway
+# FI  # Finland
+# CH  # Switzerland
+# AT  # Austria
+# IE  # Ireland
+# US  # United States
+# CA  # Canada
+# AU  # Australia
+# NZ  # New Zealand
+# BR  # Brazil
+# AR  # Argentina
+# MX  # Mexico
+# TR  # Turkey
+# PL  # Poland
+# CZ  # Czech Republic
+# HU  # Hungary
+# GR  # Greece
+# RU  # Russia
+# CN  # China
+# IN  # India
+# JP  # Japan
+# KR  # South Korea
+# SG  # Singapore
+# ZA  # South Africa
+# SA  # Saudi Arabia
+# AE  # United Arab Emirates
