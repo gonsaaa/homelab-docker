@@ -80,6 +80,29 @@ http:
       tls:
         certResolver: cloudflare
       service: home-assistant
+      middlewares:
+        - rate-limit@file
+
+    homelable:
+      entryPoints:
+        - https
+      rule: "Host(`homelable.home.gonsa.org`)"
+      tls: {}
+      service: homelable
+
+    pve-ups:
+      entryPoints:
+        - https
+      rule: "Host(`pve-ups.home.gonsa.org`)"
+      tls: {}
+      service: pve-ups
+
+    backrest:
+      entryPoints:
+        - https
+      rule: "Host(`backrest.home.gonsa.org`)"
+      tls: {}
+      service: backrest
 
   # ------------------------------------------------------------
   # Services
@@ -132,7 +155,23 @@ http:
         servers:
           - url: "http://192.168.1.168:8123"
 
-  # ------------------------------------------------------------
+    homelable:
+      loadbalancer:
+        servers:
+          - url: "http://192.168.1.80:3000"
+
+
+    pve-ups:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.1.238:8080"
+
+    backrest:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.1.112:9898"
+
+
   # Backend TLS transports
   # ------------------------------------------------------------
 
@@ -160,8 +199,3 @@ http:
       rateLimit:
         average: 50 # Allow 50 requests per second on average per client IP
         burst: 100   # Allow short spikes of up to 100 requests at once, before throttling kicks in
-
-    crowdsec-bouncer:
-      forwardAuth:
-        address: http://bouncer-traefik:8080/api/v1/forwardAuth
-        trustForwardHeader: true
