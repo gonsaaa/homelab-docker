@@ -1,6 +1,6 @@
 services:
   calibre-web-automated:
-    image: crocodilestick/calibre-web-automated:v4.0.6
+    image: crocodilestick/calibre-web-automated:v4.0.7
     container_name: calibre-web-automated
     ports:
       - 8085:8083 # Change the first number to change the port you want to access the Web UI, not the second
