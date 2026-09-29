@@ -13,6 +13,24 @@
 
   "prBodyTemplate": "{{{table}}}\n\n{{{changelogs}}}",
 
+  "ignorePaths": [
+    "calibre-web-automated/**",
+    "calibre-web/**",
+    "immich-kiosk/**",
+    "immichframe/**",
+    "maintainerr/**",
+    "metube/**",
+    "docling/**",
+    "firefox/**",
+    "jackett/**",
+    "kosync/**",
+    "nginx-proxy-manager/**",
+    "obsidian/**",
+    "pulsarr/**",
+    "slskd/**",
+    "wastebin/**"
+  ],
+
   "docker-compose": {
     "hostRules": [
       {
@@ -37,7 +55,7 @@
         "Stack": "`{{{parentDir}}}`"
       }
     },
-    
+
     {
       "description": "Ignore PostgreSQL major upgrades",
       "matchDatasources": ["docker"],
@@ -79,9 +97,11 @@
       "matchUpdateTypes": ["major"],
       "enabled": false
     },
-    
+
     {
-      "matchPackageNames": ["gtstef/filebrowser"],
+      "matchPackageNames": [
+        "gtstef/filebrowser"
+      ],
       "changelogUrl": "https://github.com/gtsteffaniak/filebrowser/releases"
     },
 
@@ -116,7 +136,7 @@
       ],
       "minimumReleaseAge": "3 days"
     },
-    
+
     {
       "description": "Handle LinuxServer qBittorrent version tags",
       "matchDatasources": ["docker"],
@@ -137,26 +157,5 @@
       ],
       "versioning": "semver-coerced"
     }
-
-    {
-      "ignorePaths": [
-        "calibre-web-automated/**",
-        "calibre-web/***",
-        "immich-kiosk/**",
-        "immichframe/**",
-        "maintainerr/**",
-        "metube/***",
-        "docling/***",
-        "firefox/***",
-        "jackett/***",
-        "kosync/***",
-        "nginx-proxy-manager/***",
-        "obsidian/***",
-        "pulsarr/***",
-        "slskd/***",
-        "wastebin/***",
-      ],
-    }   
   ]
-  
 }
