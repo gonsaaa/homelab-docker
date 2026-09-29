@@ -7,7 +7,6 @@ services:
  #   ports:
  #     - "9999:9999"
     ## If you intend to use stash's DLNA functionality uncomment the below network mode and comment out the above ports section
-    network_mode: bridge
     logging:
       driver: "json-file"
       options:
@@ -40,7 +39,6 @@ services:
 
     labels:
       - "traefik.enable=true"
-      - "traefik.http.services.stash.loadbalancer.server.port=9999"
       # myservice - Local
       - "traefik.http.routers.stash-home.rule=Host(`stash.home.gonsa.org`)"
       - "traefik.http.routers.stash-home.entrypoints=https"
