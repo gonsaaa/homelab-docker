@@ -40,7 +40,7 @@ services:
 
     labels:
       - "traefik.enable=true"
-      - "traefik.http.services.myservice.loadbalancer.server.port=9999"
+      - "traefik.http.services.stash.loadbalancer.server.port=9999"
       # myservice - Local
       - "traefik.http.routers.stash-home.rule=Host(`stash.home.gonsa.org`)"
       - "traefik.http.routers.stash-home.entrypoints=https"
