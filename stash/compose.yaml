@@ -4,8 +4,8 @@ services:
     container_name: stash
     #restart: unless-stopped
     ## the container's port must be the same with the STASH_PORT in the environment section
-    ports:
-      - "9999:9999"
+ #   ports:
+ #     - "9999:9999"
     ## If you intend to use stash's DLNA functionality uncomment the below network mode and comment out the above ports section
     network_mode: bridge
     logging:
@@ -40,7 +40,6 @@ services:
 
     labels:
       - "traefik.enable=true"
-      - "traefik.http.services.stash.loadbalancer.server.port=3000"
       
       # myservice - Local
       - "traefik.http.routers.stash-home.rule=Host(`stash.home.gonsa.org`)"
