@@ -37,3 +37,30 @@ services:
       - /nfs/share/data/stash/blobs:/blobs
       ## Where to store generated content (screenshots,previews,transcodes,sprites)
       - /nfs/share/data/stash/generated:/generated
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.stash.loadbalancer.server.port=3000"
+      
+      # myservice - Local
+      - "traefik.http.routers.stash-home.rule=Host(`stash.home.gonsa.org`)"
+      - "traefik.http.routers.stash-home.entrypoints=https"
+      - "traefik.http.routers.stash-home.tls.certresolver=cloudflare"
+      - "traefik.http.routers.stash-home.service=stash"
+
+      # myservice - External
+      - "traefik.http.routers.stash.rule=Host(`stash.gonsa.org`)"
+      - "traefik.http.routers.stash.entrypoints=https"
+      - "traefik.http.routers.stash.tls.certresolver=cloudflare"
+      - "traefik.http.routers.stash.service=stash"
+
+      # HTTP redirects for both domains
+      - "traefik.http.routers.stash-http.entrypoints=http"
+      - "traefik.http.routers.stash-http.rule=Host(`stash.gonsa.org`) || Host(`stash.home.gonsa.org`)"
+      - "traefik.http.routers.stash-http.middlewares=redirect-to-https"
+    networks:
+      - traefik-net
+
+networks:
+  traefik-net:
+    external: true
