@@ -137,7 +137,26 @@
       ],
       "versioning": "semver-coerced"
     }
-    
+
+    {
+      "ignorePaths": [
+        "calibre-web-automated/**",
+        "calibre-web/***",
+        "immich-kiosk/**",
+        "immichframe/**",
+        "maintainerr/**",
+        "metube/***",
+        "docling/***",
+        "firefox/***",
+        "jackett/***",
+        "kosync/***",
+        "nginx-proxy-manager/***",
+        "obsidian/***",
+        "pulsarr/***",
+        "slskd/***",
+        "wastebin/***",
+      ],
+    }   
   ]
   
 }
