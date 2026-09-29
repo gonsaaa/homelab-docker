@@ -39,22 +39,30 @@ services:
 
     labels:
       - "traefik.enable=true"
-      # myservice - Local
+      - "traefik.docker.network=traefik-net"
+    
+      # Stash backend
+      - "traefik.http.services.stash.loadbalancer.server.port=9999"
+    
+      # Local HTTPS
       - "traefik.http.routers.stash-home.rule=Host(`stash.home.gonsa.org`)"
       - "traefik.http.routers.stash-home.entrypoints=https"
+      - "traefik.http.routers.stash-home.tls=true"
       - "traefik.http.routers.stash-home.tls.certresolver=cloudflare"
       - "traefik.http.routers.stash-home.service=stash"
-
-      # myservice - External
+    
+      # External HTTPS
       - "traefik.http.routers.stash.rule=Host(`stash.gonsa.org`)"
       - "traefik.http.routers.stash.entrypoints=https"
+      - "traefik.http.routers.stash.tls=true"
       - "traefik.http.routers.stash.tls.certresolver=cloudflare"
       - "traefik.http.routers.stash.service=stash"
-
-      # HTTP redirects for both domains
+    
+      # HTTP -> HTTPS
       - "traefik.http.routers.stash-http.entrypoints=http"
       - "traefik.http.routers.stash-http.rule=Host(`stash.gonsa.org`) || Host(`stash.home.gonsa.org`)"
       - "traefik.http.routers.stash-http.middlewares=redirect-to-https"
+      - "traefik.http.routers.stash-http.service=noop@internal"
     networks:
       - traefik-net
 
