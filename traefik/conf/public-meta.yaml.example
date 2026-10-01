@@ -1,0 +1,20 @@
+http:
+  middlewares:
+
+    security-txt:
+      plugin:
+        security-txt:
+          Contact:
+            - "mailto:security@your-email"
+          Expires: "2027-09-01T00:00:00Z"
+          PreferredLanguages: "en"
+
+    robots-txt:
+      plugin:
+        robots-txt:
+          overwrite: true
+          enableComment: false
+          aiRobotsTxt: false
+          customRules: |
+            User-agent: *
+            Disallow: /
