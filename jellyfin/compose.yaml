@@ -17,8 +17,10 @@ services:
     user: 1000:1000
     #network_mode: 'host'
     volumes:
-      - /nfs/share/data/jellyfin/config:/config
-      - /nfs/share/data/jellyfin/cache:/cache
+     # - /nfs/share/data/jellyfin/config:/config
+     # - /nfs/share/data/jellyfin/cache:/cache
+      - /mnt/nfs41-test/data/jellyfin/cache:/cache
+      - /mnt/nfs41-test/data/jellyfin/config:/config
       - /nfs/share/data/media:/media
     #devices:   
      # - /dev/dri/renderD128:/dev/dri/renderD128  # ls /dev/dri
