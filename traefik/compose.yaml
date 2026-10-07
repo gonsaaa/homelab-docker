@@ -14,6 +14,8 @@ services:
         CLOUDFLARE_DNS_API_TOKEN_FILE: /run/secrets/cf_api_token
     secrets:
       - cf_api_token
+      - crowdsec_plugin_key
+
     env_file: .env
     volumes:
       - /etc/localtime:/etc/localtime:ro
@@ -40,6 +42,9 @@ services:
 secrets:
   cf_api_token:
     file: /home/gonsa/traefik/cf_api_token.txt
+  crowdsec_plugin_key:
+    file: /home/gonsa/traefik/crowdsec_plugin_key.txt
+
 networks:
   traefik-net:
       external: true
