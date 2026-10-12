@@ -1,0 +1,37 @@
+
+services:
+  dispatcharr:
+    image: ghcr.io/dispatcharr/dispatcharr:0.32.0
+    container_name: dispatcharr
+    restart: unless-stopped
+
+    environment:
+      TZ: Europe/Lisbon
+      DISPATCHARR_ENV: aio
+      REDIS_HOST: localhost
+      CELERY_BROKER_URL: redis://localhost:6379/0
+      DISPATCHARR_LOG_LEVEL: info
+
+    volumes:
+      - /nfs/share/data/dispatcharr:/data
+
+    networks:
+      - traefik-net
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik-net"
+
+      # Router
+      - "traefik.http.routers.dispatcharr.rule=Host(`dispatcharr.home.gonsa.org`)"
+      - "traefik.http.routers.dispatcharr.entrypoints=websecure"
+      - "traefik.http.routers.dispatcharr.tls=true"
+
+      # Service
+      - "traefik.http.routers.dispatcharr.service=dispatcharr"
+      - "traefik.http.services.dispatcharr.loadbalancer.server.port=9191"
+
+
+networks:
+  traefik-net:
+    external: true
