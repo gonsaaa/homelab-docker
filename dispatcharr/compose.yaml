@@ -42,6 +42,34 @@ services:
       - "traefik.http.routers.dispatcharr.service=dispatcharr"
       - "traefik.http.services.dispatcharr.loadbalancer.server.port=9191"
 
+  teamarr:
+    image: ghcr.io/pharaoh-labs/teamarr:2.22.0
+    container_name: teamarr
+    restart: unless-stopped
+
+    environment:
+      TZ: Europe/Lisbon
+      LOG_LEVEL: INFO
+
+    volumes:
+      - /nfs/share/data/teamarr:/app/data
+
+    networks:
+      - traefik-net
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik-net"
+      - "traefik.http.routers.teamarr.rule=Host(`teamarr.home.gonsa.org`)"
+      - "traefik.http.routers.teamarr.entrypoints=https"
+      - "traefik.http.routers.teamarr.tls=true"
+      - "traefik.http.routers.teamarr.service=teamarr"
+      - "traefik.http.services.teamarr.loadbalancer.server.port=9195"
+
+      # Restrict Teamarr UI to your LAN
+      - "traefik.http.routers.teamarr.middlewares=teamarr-lan"
+      - "traefik.http.middlewares.teamarr-lan.ipallowlist.sourcerange=192.168.1.0/24"
+
 
 networks:
   traefik-net:
