@@ -2,7 +2,7 @@ services:
   dispatcharr:
     image: ghcr.io/dispatcharr/dispatcharr:0.32.0
     container_name: dispatcharr
-    restart: unless-stopped
+   # restart: unless-stopped
 
     environment:
       TZ: Europe/Lisbon
@@ -45,7 +45,7 @@ services:
   teamarr:
     image: ghcr.io/pharaoh-labs/teamarr:2.23.1
     container_name: teamarr
-    restart: unless-stopped
+   # restart: unless-stopped
 
     environment:
       TZ: Europe/Lisbon
