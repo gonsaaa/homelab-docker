@@ -28,7 +28,8 @@
     "obsidian/**",
     "pulsarr/**",
     "slskd/**",
-    "wastebin/**"
+    "wastebin/**",
+    "teamarr/***"
   ],
 
   "docker-compose": {
