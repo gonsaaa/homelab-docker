@@ -43,7 +43,7 @@ services:
       - "traefik.http.services.dispatcharr.loadbalancer.server.port=9191"
 
   teamarr:
-    image: ghcr.io/pharaoh-labs/teamarr:2.24.0
+    image: ghcr.io/pharaoh-labs/teamarr:2.24.2
     container_name: teamarr
    # restart: unless-stopped
 
