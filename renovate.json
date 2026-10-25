@@ -29,7 +29,8 @@
     "pulsarr/**",
     "slskd/**",
     "wastebin/**",
-    "teamarr/***"
+    "teamarr/**",
+    "dispatcharr/**"
   ],
 
   "docker-compose": {
