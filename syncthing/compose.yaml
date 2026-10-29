@@ -9,6 +9,7 @@ services:
       - TZ=Europe/Lisbon
     volumes:
       - /nfs/share/data/syncthing/config:/config
+      - /nfs/share/Redheart/gonsacard:/data/gonsacard
       #- /path/to/data2:/data2
     ports:
   #    - 8384:8384
