@@ -45,7 +45,7 @@ services:
       - "traefik.http.routers.qbit.tls.certresolver=cloudflare"
       - "traefik.http.routers.qbit.service=qbit"
       - "traefik.http.routers.qbit.middlewares=ip-whitelist@file"
-      - "traefik.http.services.qbit.loadbalancer.server.port=8081"
+      - "traefik.http.services.qbit.loadbalancer.server.port=8181"
 
       # HTTP -> HTTPS
       - "traefik.http.routers.qbit-http.rule=Host(`qbit.home.gonsa.org`)"
@@ -110,7 +110,7 @@ services:
       PUID: "1000"
       PGID: "1000"
       UMASK: "022"
-      WEBUI_PORT: "8081"
+      WEBUI_PORT: "8181"
       TZ: Europe/Lisbon
 
     volumes:
