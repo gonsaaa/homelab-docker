@@ -54,6 +54,13 @@ services:
       - "traefik.http.routers.qbit-http.service=qbit"
       - "traefik.http.middlewares.qbit-https-redirect.redirectscheme.scheme=https"
 
+       # ============================================================
+      # Nicotine+ WebSocket middleware
+      # ============================================================
+
+      - "traefik.http.middlewares.nicotine-headers.headers.customrequestheaders.Connection=upgrade"
+      - "traefik.http.middlewares.nicotine-headers.headers.customrequestheaders.Upgrade=websocket"
+
       # ============================================================
       # Nicotine+ - Home
       # ============================================================
@@ -63,7 +70,7 @@ services:
       - "traefik.http.routers.nicotine-home.tls=true"
       - "traefik.http.routers.nicotine-home.tls.certresolver=cloudflare"
       - "traefik.http.routers.nicotine-home.service=nicotine"
-      - "traefik.http.routers.nicotine-home.middlewares=ip-whitelist@file"
+      - "traefik.http.routers.nicotine-home.middlewares=ip-whitelist@file,nicotine-headers@docker"
       - "traefik.http.services.nicotine.loadbalancer.server.port=6565"
 
       # ============================================================
@@ -75,7 +82,7 @@ services:
       - "traefik.http.routers.nicotine.tls=true"
       - "traefik.http.routers.nicotine.tls.certresolver=cloudflare"
       - "traefik.http.routers.nicotine.service=nicotine"
-      - "traefik.http.routers.nicotine.middlewares=authentik@file"
+      - "traefik.http.routers.nicotine.middlewares=authentik@file,nicotine-headers@docker"
 
       # HTTP -> HTTPS
       - "traefik.http.routers.nicotine-http.rule=Host(`nicotine.gonsa.org`)"
