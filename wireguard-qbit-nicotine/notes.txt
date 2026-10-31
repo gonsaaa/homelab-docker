@@ -1,0 +1,51 @@
+# ============================================================================
+# NOTE: WireGuard shared network namespace / port collision - 2026-10-31
+# ============================================================================
+#
+# qBittorrent and Nicotine+ both use:
+#
+#   network_mode: "service:wireguard"
+#
+# This means they share WireGuard's network namespace, including the same
+# TCP/UDP port space.
+#
+# After a host reboot, qBittorrent failed to start its WebUI with:
+#
+#   Unable to bind to IP: *, port: 8081
+#   Reason: The bound address is already in use
+#
+# Nicotine+ exposes its WebUI through nginx on port 6565, but internally its
+# Broadway server (broadwayd) also listens on port 8081. Because qBittorrent
+# was also configured to use port 8081, both applications were competing for
+# the same port inside the shared WireGuard network namespace.
+#
+# Verified with:
+#
+#   nsenter -t "$(docker inspect -f '{{.State.Pid}}' wireguard)" -n ss -lntp
+#
+# which showed:
+#
+#   :8081 -> broadwayd (Nicotine+)
+#   :6565 -> nginx      (Nicotine+ WebUI)
+#   :2234 -> nicotine   (Soulseek listening port)
+#
+# Fix:
+#
+#   qBittorrent WebUI: 8081 -> 8181
+#
+# Also updated:
+#   - Traefik qbit service backend port to 8181
+#   - Proton NAT-PMP helper qBittorrent API URL from :8081 to :8181 (/nfs/share/data/wireguard/custom-cont-init.d/10-proton-pf.sh)
+#
+# Expected ports:
+#
+#   8081 -> Nicotine+ Broadway (internal)
+#   8181 -> qBittorrent WebUI/API
+#   6565 -> Nicotine+ nginx WebUI
+#   2234 -> Nicotine+ Soulseek port
+#
+# IMPORTANT:
+# When adding another container with network_mode: "service:wireguard",
+# check all listening ports first because every container sharing this
+# namespace must use unique ports.
+# ============================================================================
