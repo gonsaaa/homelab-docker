@@ -1,0 +1,55 @@
+
+services:
+  dozzle:
+    image: amir20/dozzle:v11.4.0
+    container_name: dozzle
+    restart: unless-stopped
+
+    environment:
+      DOZZLE_AUTH_PROVIDER: simple
+      DOZZLE_REMOTE_HOST: "tcp://socket-proxy:2375|vmdocker"
+      DOZZLE_ENABLE_ACTIONS: "false"
+      DOZZLE_ENABLE_SHELL: "false"
+      DOZZLE_NO_ANALYTICS: "true"
+
+    volumes:
+      - /home/gonsa/dozzle/data:/data
+
+    networks:
+      - traefik-net
+      - dozzle-socket
+
+    depends_on:
+      - socket-proxy
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik-net"
+      - "traefik.http.routers.dozzle.rule=Host(`logs.gonsa.org`)"
+      - "traefik.http.routers.dozzle.entrypoints=https"
+      - "traefik.http.routers.dozzle.tls.certresolver=cloudflare"
+      - "traefik.http.services.dozzle.loadbalancer.server.port=8080"
+
+  socket-proxy:
+    image: tecnativa/docker-socket-proxy:v0.5.0
+    container_name: dozzle-socket-proxy
+    restart: unless-stopped
+
+    environment:
+      CONTAINERS: "1"
+      EVENTS: "1"
+      INFO: "1"
+      POST: "0"
+
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+    networks:
+      - dozzle-socket
+
+networks:
+  traefik-net:
+    external: true
+
+  dozzle-socket:
+    internal: true
