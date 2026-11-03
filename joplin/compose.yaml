@@ -49,7 +49,7 @@ services:
             - POSTGRES_DATABASE=joplindb
             - POSTGRES_USER=$POSTGRES_USER
             - POSTGRES_PORT=5432
-            - POSTGRES_HOST=db
+            - POSTGRES_HOST=joplin-db
             - MAILER_ENABLED=1
             - MAILER_HOST=$MAILER_HOST
             - MAILER_PORT=587
