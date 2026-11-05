@@ -1,42 +1,56 @@
+
 services:
   beszel:
     image: henrygd/beszel:0.21.1
     container_name: beszel
     restart: unless-stopped
-   # ports:
-   #   - 8090:8090
+    # ports:
+    #   - 8090:8090
     volumes:
       - /nfs/share/data/beszel/beszel_data:/beszel_data
       - /nfs/share/data/beszel/beszel_socket:/beszel_socket
     labels:
       - "traefik.enable=true"
-    # Route HTTPS traffic to beszel
+      # Route HTTPS traffic to beszel
       - "traefik.http.routers.beszel.rule=Host(`beszel.gonsa.org`)"
       - "traefik.http.routers.beszel.entrypoints=https"
       - "traefik.http.routers.beszel.tls=true"
       - "traefik.http.routers.beszel.tls.certresolver=cloudflare"
-     # Redirect http to https:
+      # Redirect HTTP to HTTPS
       - "traefik.http.routers.beszel-http.entrypoints=http"
       - "traefik.http.routers.beszel-http.rule=Host(`beszel.gonsa.org`)"
       - "traefik.http.routers.beszel-http.middlewares=redirect-to-https"
       - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
-      # Secure = crowdsec & rate-limit
+      # Secure = CrowdSec & rate-limit
       - "traefik.http.routers.beszel.middlewares=rate-limit@file"
     networks:
       - traefik-net
 
   beszel-agent:
-    image: "henrygd/beszel-agent"
-    container_name: "beszel-agent"
+    image: ghcr.io/henrygd/beszel/beszel-agent-nvidia:0.21.1
+    container_name: beszel-agent
     restart: unless-stopped
     network_mode: host
+
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      # monitor other disks / partitions by mounting a folder in /extra-filesystems
+      # Monitor other disks / partitions
       # - /mnt/disk/.beszel:/extra-filesystems/sda1:ro
+
     environment:
       LISTEN: 45876
       KEY: ${KEY}
+      GPU_COLLECTOR: nvidia-smi
+
+    # NVIDIA RTX 3060 GPU monitoring
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities:
+                - utility
 
 networks:
   traefik-net:
