@@ -30,7 +30,8 @@
     "slskd/**",
     "wastebin/**",
     "teamarr/**",
-    "dispatcharr/**"
+    "dispatcharr/**",
+    "portainer/**"
   ],
 
   "docker-compose": {
