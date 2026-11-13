@@ -1,6 +1,6 @@
 services:
   jellystat-db:
-    image: postgres:15.19
+    image: postgres:15.20
     container_name: jellystat-db
     environment:
       POSTGRES_DB: 'jfstat'
