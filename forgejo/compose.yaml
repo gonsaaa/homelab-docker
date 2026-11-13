@@ -40,7 +40,7 @@ services:
       - "traefik.http.routers.forgejo.service=forgejo"
 
   database:
-    image: postgres:17.11
+    image: postgres:17.12
     container_name: forgejo-database
     restart: always
 
