@@ -1,19 +1,46 @@
+
 services:
   nebula-sync:
-    network_mode: host
     image: ghcr.io/lovelaze/nebula-sync:v0.11.3
     container_name: nebula-sync
+    network_mode: host
     security_opt:
       - no-new-privileges:true
     user: "1000:1000"
     restart: unless-stopped
+
     environment:
+      # Pi-hole connections
       - PRIMARY_FILE=/run/secrets/nebula_primary
       - REPLICAS_FILE=/run/secrets/nebula_replica
-      - FULL_SYNC=true
+
+      # Schedule
       - CRON=@daily
       - TZ=Europe/Lisbon
 
+      # Selective synchronization
+      - FULL_SYNC=false
+      - RUN_GRAVITY=true
+
+      # Local DNS records only
+      - SYNC_CONFIG_DNS=true
+      - SYNC_CONFIG_DNS_INCLUDE=hosts,cnameRecords
+
+      # DHCP is managed by UniFi
+      - SYNC_CONFIG_DHCP=false
+      - SYNC_GRAVITY_DHCP_LEASES=false
+
+      # Keep advanced settings independent
+      - SYNC_CONFIG_MISC=false
+
+      # Ad-blocking synchronization
+      - SYNC_GRAVITY_GROUP=true
+      - SYNC_GRAVITY_AD_LIST=true
+      - SYNC_GRAVITY_AD_LIST_BY_GROUP=true
+      - SYNC_GRAVITY_DOMAIN_LIST=true
+      - SYNC_GRAVITY_DOMAIN_LIST_BY_GROUP=true
+      - SYNC_GRAVITY_CLIENT=true
+      - SYNC_GRAVITY_CLIENT_BY_GROUP=true
 
     secrets:
       - nebula_primary
