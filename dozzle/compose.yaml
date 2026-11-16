@@ -53,6 +53,36 @@ services:
     networks:
       - dozzle-socket
 
+  traefik-app-logs:
+    image: alpine:3
+    container_name: traefik-app-logs
+    restart: unless-stopped
+    network_mode: none
+    volumes:
+      - /home/gonsa/traefik/logs:/logs:ro
+    command: ["tail", "-n", "100", "-F", "/logs/traefik.log"]
+    labels:
+      dev.dozzle.name: "Traefik Logs"
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+ traefik-access-logs:
+    image: alpine:3
+    container_name: traefik-access-logs
+    restart: unless-stopped
+    network_mode: none
+    volumes:
+      - /home/gonsa/traefik/logs:/logs:ro
+    command: ["tail", "-n", "100", "-F", "/logs/access.log"]
+    labels:
+      dev.dozzle.name: "Traefik Access Logs"
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+
 networks:
   traefik-net:
     external: true
