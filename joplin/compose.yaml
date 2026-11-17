@@ -17,7 +17,7 @@ services:
         networks:
           - traefik-net
     app:
-        image: joplin/server:3.7.5
+        image: joplin/server:3.7.6
         container_name: joplin-app
         depends_on:
             - db
