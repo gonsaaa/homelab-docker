@@ -23,10 +23,10 @@ services:
     volumes:
       - /nfs/share/data/foxy:/config
 
-    mem_limit: 4g
-    memswap_limit: 8g
+    mem_limit: 8g
+    memswap_limit: 12g
 
-    shm_size: "1gb"
+    shm_size: "2gb"
 
     tmpfs:
       - /tmp:size=1g,mode=1777
