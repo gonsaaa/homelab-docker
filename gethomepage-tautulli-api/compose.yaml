@@ -10,4 +10,4 @@ services:
       - "3010:3010"
     volumes:
       - /nfs/share/data/gethomepage-tautulli-api/config:/app/config
-    restart: unless-stopped
+ #   restart: unless-stopped
