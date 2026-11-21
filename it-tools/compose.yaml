@@ -5,7 +5,7 @@ services:
         ports:
             - '8077:80'
     #    network_mode: bridge
-        restart: unless-stopped
+       # restart: unless-stopped
         volumes:
             - /nfs/share/data/it-tools:/it-tools
         security_opt:
