@@ -10,7 +10,7 @@ services:
       - no-new-privileges:true
     volumes:
     - /nfs/share/data/jellystat/postgres-data:/var/lib/postgresql/data
-    restart: unless-stopped
+   # restart: unless-stopped
   jellystat:
     image: cyfershepard/jellystat:1.1.12
     container_name: jellystat
