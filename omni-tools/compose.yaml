@@ -3,7 +3,7 @@ services:
     image: iib0011/omni-tools:0.7.0
     container_name: omni-tools
     #network_mode: bridge
-    restart: unless-stopped
+  #  restart: unless-stopped
  #   ports:
  #     - "8076:80"
     security_opt:
