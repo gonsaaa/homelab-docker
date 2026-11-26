@@ -58,6 +58,7 @@ services:
       - "traefik.http.routers.stash.tls=true"
       - "traefik.http.routers.stash.tls.certresolver=cloudflare"
       - "traefik.http.routers.stash.service=stash"
+      - "traefik.http.routers.stash.middlewares=lan-only@file"
     
       # HTTP -> HTTPS
       - "traefik.http.routers.stash-http.entrypoints=http"
