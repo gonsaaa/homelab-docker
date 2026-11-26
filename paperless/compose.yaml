@@ -118,7 +118,7 @@ services:
       - "traefik.http.routers.paperless-http.middlewares=redirect-to-https"
       - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
 
-      - "traefik.http.routers.paperless.middlewares=force-sso"
+      - "traefik.http.routers.paperless.middlewares=lan-only@file,force-sso"
 
       # Middleware definition
       - "traefik.http.middlewares.force-sso.redirectregex.regex=^https://paperless.gonsa.org/accounts/login/(.*)"
