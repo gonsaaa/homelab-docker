@@ -33,6 +33,7 @@ services:
       - "traefik.http.routers.traefik-secure.tls.domains[0].main=home.gonsa.org"
       - "traefik.http.routers.traefik-secure.tls.domains[0].sans=*.home.gonsa.org"
       - "traefik.http.routers.traefik-secure.service=api@internal"
+      - "traefik.http.routers.traefik-secure.middlewares=lan-only@file"
       #http-https
       - "traefik.http.routers.traefik.entrypoints=http"
       - "traefik.http.routers.traefik.rule=Host(`traefik.home.gonsa.org`)"
