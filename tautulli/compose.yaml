@@ -20,6 +20,7 @@ services:
       - "traefik.http.routers.tautulli-public.entrypoints=https"
       - "traefik.http.routers.tautulli-public.rule=Host(`tautulli.gonsa.org`)"
       - "traefik.http.routers.tautulli-public.tls.certresolver=cloudflare"
+      - "traefik.http.routers.tautulli-public.middlewares=lan-only@file"
 
       - "traefik.http.routers.tautulli-http.entrypoints=http"
       - "traefik.http.routers.tautulli-http.rule=Host(`tautulli.gonsa.org`)"
