@@ -26,6 +26,7 @@ services:
       - 'traefik.http.routers.anchor-home.tls=true'
       - 'traefik.http.routers.anchor-home.tls.certresolver=cloudflare'
       - 'traefik.http.routers.anchor-home.service=anchor'
+      - 'traefik.http.routers.anchor-home.middlewares=lan-only@file'
 
       # External
       - 'traefik.http.routers.anchor.rule=Host(`anchor.gonsa.org`)'
