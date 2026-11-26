@@ -21,6 +21,7 @@ services:
       # Quantum listens on port 80 internally by default (changed from 8080)
       - "traefik.http.services.filebrowser.loadbalancer.server.port=80"
      # - "traefik.http.routers.filebrowser.middlewares=authentik@file"
+      - "traefik.http.routers.filebrowser.middlewares=lan-only@file"
 
     networks:
       - traefik-net
