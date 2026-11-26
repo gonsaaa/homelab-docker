@@ -27,6 +27,7 @@ services:
       - "traefik.http.routers.pdf-home.rule=Host(`pdf.home.gonsa.org`)"
       - "traefik.http.routers.pdf-home.entrypoints=https"
       - "traefik.http.routers.pdf-home.tls.certresolver=cloudflare"
+      - "traefik.http.routers.pdf-home.middlewares=lan-only@file"
       
       - "traefik.http.routers.pdf.rule=Host(`pdf.gonsa.org`)"
       - "traefik.http.routers.pdf.entrypoints=https"
