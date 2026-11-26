@@ -23,6 +23,7 @@ services:
       - "traefik.http.routers.grafana.rule=Host(`grafana.gonsa.org`)"
       - "traefik.http.routers.grafana.entrypoints=https"
       - "traefik.http.routers.grafana.tls=true"
+      - "traefik.http.routers.grafana.middlewares=lan-only@file"
 
 networks:
   traefik-net:
