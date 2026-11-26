@@ -30,7 +30,7 @@ services:
       - "traefik.http.routers.homepage-filipa.rule=Host(`homepagefilipa.gonsa.org`)"
       - "traefik.http.routers.homepage-filipa.entrypoints=https"
       - "traefik.http.routers.homepage-filipa.tls.certresolver=cloudflare"
-      - "traefik.http.routers.homepage-filipa.middlewares=authentik@file"
+      - "traefik.http.routers.homepage-filipa.middlewares=lan-only@file,authentik@file"
       - "traefik.http.routers.homepage-filipa.priority=50"
     
       # HTTP → HTTPS only for public host
