@@ -56,6 +56,7 @@ services:
       - "traefik.http.routers.openwebui-home.rule=Host(`openwebui.home.gonsa.org`)"
       - "traefik.http.routers.openwebui-home.entrypoints=https"
       - "traefik.http.routers.openwebui-home.tls.certresolver=cloudflare"
+      - "traefik.http.routers.openwebui-home.middlewares=lan-only@file"
 
       # OpenWebUI - External (with auth)
       - "traefik.http.routers.openwebui.rule=Host(`openwebui.gonsa.org`)"
