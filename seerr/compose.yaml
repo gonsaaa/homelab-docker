@@ -27,7 +27,7 @@ services:
 
     # HTTP-to-HTTPS redirect for public domain if not using CF Tunnel
       - "traefik.http.routers.seerr-public.rule=Host(`seerr.gonsa.org`)"
-      - "traefik.http.routers.seerr-public.entrypoints=http"
+      - "traefik.http.routers.seerr-public.entrypoints=https"
       - "traefik.http.routers.seerr-public.middlewares=seerr-https-redirect"
       - "traefik.http.routers.seerr-public.middlewares=lan-only@file,rate-limit@file"
 
