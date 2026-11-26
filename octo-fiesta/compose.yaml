@@ -137,6 +137,7 @@ services:
       - "traefik.http.routers.octo-fiesta.entrypoints=https"
       - "traefik.http.routers.octo-fiesta.tls.certresolver=cloudflare"
       - "traefik.http.routers.octo-fiesta.service=octo-fiesta"
+      - "traefik.http.routers.filebrowser.middlewares=lan-only@file"
 
       # HTTP redirects for both domains
       - "traefik.http.routers.octo-fiesta-http.entrypoints=http"
