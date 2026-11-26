@@ -5,25 +5,25 @@ services:
     restart: always
     security_opt:
       - no-new-privileges:true
+    depends_on:
+      - traefik-socket-proxy
     networks:
       - traefik-net
+      - traefik-docker-api
     ports:
-      - 80:80
-      - 443:443
+      - "80:80"
+      - "443:443"
     environment:
-        CLOUDFLARE_DNS_API_TOKEN_FILE: /run/secrets/cf_api_token
+      CLOUDFLARE_DNS_API_TOKEN_FILE: /run/secrets/cf_api_token
     secrets:
       - cf_api_token
       - crowdsec_plugin_key
-
     env_file: .env
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - /home/gonsa/traefik/traefik.yml:/traefik.yml:ro
+      - /home/gonsa/traefik/traefik.socket-proxy.yml:/traefik.yml:ro
       - /home/gonsa/traefik/conf:/conf:rw
       - /home/gonsa/traefik/logs:/var/log/traefik
-
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.traefik-secure.entrypoints=https"
@@ -33,12 +33,29 @@ services:
       - "traefik.http.routers.traefik-secure.tls.domains[0].main=home.gonsa.org"
       - "traefik.http.routers.traefik-secure.tls.domains[0].sans=*.home.gonsa.org"
       - "traefik.http.routers.traefik-secure.service=api@internal"
-      #http-https
+      # HTTP to HTTPS
       - "traefik.http.routers.traefik.entrypoints=http"
       - "traefik.http.routers.traefik.rule=Host(`traefik.home.gonsa.org`)"
       - "traefik.http.middlewares.traefik-https-redirect.redirectscheme.scheme=https"
       - "traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=https"
       - "traefik.http.routers.traefik.middlewares=traefik-https-redirect"
+
+  traefik-socket-proxy:
+    image: ghcr.io/wollomatic/socket-proxy:1.14.0
+    container_name: traefik-socket-proxy
+    restart: unless-stopped
+    command:
+      - '-listenip=0.0.0.0'
+      - '-allowfrom=traefik'
+      - '-allowHEAD=/_ping'
+      - '-allowGET=(/v[0-9]+\.[0-9]+)?/(_ping|version|containers/(json|[A-Za-z0-9][A-Za-z0-9_.-]*/json)|events)(\?.*)?'
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - traefik-docker-api
+    labels:
+      traefik.enable: "false"
+
 secrets:
   cf_api_token:
     file: /home/gonsa/traefik/cf_api_token.txt
@@ -47,4 +64,6 @@ secrets:
 
 networks:
   traefik-net:
-      external: true
+    external: true
+  traefik-docker-api:
+    internal: true
