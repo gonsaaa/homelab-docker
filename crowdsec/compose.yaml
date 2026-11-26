@@ -81,11 +81,10 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=traefik-net"
-
       - "traefik.http.routers.crowdsec-web-ui.rule=Host(`crowdsec.home.gonsa.org`)"
       - "traefik.http.routers.crowdsec-web-ui.entrypoints=https"
       - "traefik.http.routers.crowdsec-web-ui.tls=true"
-
+      - "traefik.http.routers.crowdsec-web-ui.middlewares=lan-only@file"
       - "traefik.http.services.crowdsec-web-ui.loadbalancer.server.port=3000"
 
     logging:
