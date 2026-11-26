@@ -50,6 +50,7 @@ services:
       - "traefik.http.routers.stash-home.tls=true"
       - "traefik.http.routers.stash-home.tls.certresolver=cloudflare"
       - "traefik.http.routers.stash-home.service=stash"
+      - "traefik.http.routers.stash-home.middlewares=lan-only@file"
     
       # External HTTPS
       - "traefik.http.routers.stash.rule=Host(`stash.gonsa.org`)"
