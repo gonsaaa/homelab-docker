@@ -33,6 +33,7 @@ services:
       - "traefik.http.routers.navidrome-home.entrypoints=https"
       - "traefik.http.routers.navidrome-home.tls.certresolver=cloudflare"
       - "traefik.http.routers.navidrome-home.service=navidrome"
+      - "traefik.http.routers.navidrome-home.middlewares=lan-only@file"
 
       # myservice - External
       - "traefik.http.routers.navidrome.rule=Host(`navidrome.gonsa.org`)"
