@@ -50,7 +50,7 @@ services:
       - 'traefik.docker.network=traefik-net'
 
       # Redirect root '/' to '/admin' so React Router initialises cleanly
-      - 'traefik.http.routers.headplane-rtr.middlewares=headplane-redirect'
+      - 'traefik.http.routers.headplane-rtr.middlewares=lan-only@file,headplane-redirect'
       - 'traefik.http.middlewares.headplane-redirect.redirectregex.regex=^https://headplane.gonsa.org/$'
       - 'traefik.http.middlewares.headplane-redirect.redirectregex.replacement=https://headplane.gonsa.org/admin'
 networks:
