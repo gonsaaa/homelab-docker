@@ -40,6 +40,7 @@ services:
       - "traefik.http.routers.navidrome.entrypoints=https"
       - "traefik.http.routers.navidrome.tls.certresolver=cloudflare"
       - "traefik.http.routers.navidrome.service=navidrome"
+      - "traefik.http.routers.navidrome.middlewares=lan-only@file"
 
       # HTTP redirects for both domains
       - "traefik.http.routers.navidrome-http.entrypoints=http"
