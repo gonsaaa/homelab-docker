@@ -26,6 +26,7 @@ services:
       - "traefik.http.routers.ollama.entrypoints=https"
       - "traefik.http.routers.ollama.tls.certresolver=cloudflare"
       - "traefik.http.services.ollama.loadbalancer.server.port=11434"
+      - "traefik.http.routers.ollama.middlewares=lan-only@file"
 
   openwebui:
     image: ghcr.io/open-webui/open-webui:v0.13.5-cuda
