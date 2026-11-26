@@ -130,6 +130,7 @@ services:
       - "traefik.http.routers.octo-fiesta-home.entrypoints=https"
       - "traefik.http.routers.octo-fiesta-home.tls.certresolver=cloudflare"
       - "traefik.http.routers.octo-fiesta-home.service=octo-fiesta"
+      - "traefik.http.routers.octo-fiesta-home.middlewares=lan-only@file"
 
       # myservice - External
       - "traefik.http.routers.octo-fiesta.rule=Host(`octo-fiesta.gonsa.org`)"
