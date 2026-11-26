@@ -82,7 +82,7 @@ services:
       - "traefik.http.routers.nicotine.tls=true"
       - "traefik.http.routers.nicotine.tls.certresolver=cloudflare"
       - "traefik.http.routers.nicotine.service=nicotine"
-      - "traefik.http.routers.nicotine.middlewares=authentik@file,nicotine-headers@docker"
+      - "traefik.http.routers.nicotine.middlewares=lan-only@file,authentik@file,nicotine-headers@docker"
 
       # HTTP -> HTTPS
       - "traefik.http.routers.nicotine-http.rule=Host(`nicotine.gonsa.org`)"
