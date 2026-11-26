@@ -11,8 +11,9 @@ services:
       - "traefik.http.routers.bentopdf-home.rule=Host(`bentopdf.home.gonsa.org`)"
       - "traefik.http.routers.bentopdf-home.entrypoints=https"
       - "traefik.http.routers.bentopdf-home.tls.certresolver=cloudflare"
+      - "traefik.http.routers.bentopdf-home.middlewares=lan-only@file"
 
-      # OpenWebUI - External (with auth)
+      # External (with auth)
       - "traefik.http.routers.bentopdf.rule=Host(`bentopdf.gonsa.org`)"
       - "traefik.http.routers.bentopdf.entrypoints=https"
       - "traefik.http.routers.bentopdf.tls.certresolver=cloudflare"
