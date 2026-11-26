@@ -107,6 +107,7 @@ services:
       - "traefik.http.routers.paperless-home.rule=Host(`paperless.home.gonsa.org`)"
       - "traefik.http.routers.paperless-home.entrypoints=https"
       - "traefik.http.routers.paperless-home.tls.certresolver=cloudflare"
+      - "traefik.http.routers.paperless-home.middlewares=lan-only@file"
       
       - "traefik.http.routers.paperless.rule=Host(`paperless.gonsa.org`)"
       - "traefik.http.routers.paperless.entrypoints=https"
