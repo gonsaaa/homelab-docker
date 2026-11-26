@@ -17,6 +17,7 @@ services:
       - "traefik.http.routers.seerr-local.rule=Host(`seerr.home`)"
       - "traefik.http.routers.seerr-local.entrypoints=https"
       - "traefik.http.routers.seerr-local.tls=true"
+      - "traefik.http.routers.seerr-local.middlewares=lan-only@file"
 
     # Public domain HTTPS router (Let's Encrypt via Cloudflare)
       - "traefik.http.routers.seerr-public.rule=Host(`seerr.gonsa.org`)"
