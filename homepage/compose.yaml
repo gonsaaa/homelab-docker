@@ -27,7 +27,7 @@ services:
       - "traefik.http.routers.homepage-http.rule=Host(`homepage.gonsa.org`)"
       - "traefik.http.routers.homepage-http.middlewares=redirect-to-https"
       - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
-      - "traefik.http.routers.homepage.middlewares=authentik@file"
+      - "traefik.http.routers.homepage.middlewares=lan-only@file,authentik@file"
 
     networks:
       - traefik-net
