@@ -33,7 +33,7 @@ services:
       - "traefik.docker.network=traefik-net"
 
       - "traefik.http.routers.pingvin-share.rule=Host(`share.gonsa.org`)"
-      - "traefik.http.routers.pingvin-share.entrypoints=https"
+      - "traefik.http.routers.pingvin-share.entrypoints=https,https-tunnel"
       - "traefik.http.routers.pingvin-share.tls.certresolver=cloudflare"
 
       - "traefik.http.services.pingvin-share.loadbalancer.server.port=3000"
