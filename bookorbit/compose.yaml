@@ -79,6 +79,7 @@ services:
       - "traefik.http.routers.bookorbit.entrypoints=https-tunnel"
       - "traefik.http.routers.bookorbit.tls.certresolver=cloudflare"
       - "traefik.http.routers.bookorbit.service=bookorbit"
+      - "traefik.http.routers.bookorbit.middlewares=geo-tunnel@file"
 
       # HTTP redirect
       - "traefik.http.routers.bookorbit-http.entrypoints=http"
