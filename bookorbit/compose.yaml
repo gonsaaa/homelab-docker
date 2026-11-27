@@ -76,7 +76,7 @@ services:
 
       # bookorbit - External (with auth)
       - "traefik.http.routers.bookorbit.rule=Host(`bookorbit.gonsa.org`)"
-      - "traefik.http.routers.bookorbit.entrypoints=https,https-tunnel"
+      - "traefik.http.routers.bookorbit.entrypoints=https-tunnel"
       - "traefik.http.routers.bookorbit.tls.certresolver=cloudflare"
       - "traefik.http.routers.bookorbit.service=bookorbit"
 
