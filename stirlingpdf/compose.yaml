@@ -30,7 +30,7 @@ services:
       - "traefik.http.routers.pdf-home.middlewares=lan-only@file"
       
       - "traefik.http.routers.pdf.rule=Host(`pdf.gonsa.org`)"
-      - "traefik.http.routers.pdf.entrypoints=https,https-tunnel"
+      - "traefik.http.routers.pdf.entrypoints=https-tunnel"
       - "traefik.http.routers.pdf.tls=true"
       - "traefik.http.routers.pdf.tls.certresolver=cloudflare"
       - "traefik.http.services.pdf.loadbalancer.server.port=8080"
