@@ -67,7 +67,7 @@ services:
 
       # Weather - External (add auth if needed)
       - "traefik.http.routers.weather.rule=Host(`weather.gonsa.org`)"
-      - "traefik.http.routers.weather.entrypoints=https,https-tunnel"
+      - "traefik.http.routers.weather.entrypoints=https"
       - "traefik.http.routers.weather.tls.certresolver=cloudflare"
       - "traefik.http.routers.weather.middlewares=authentik@file"
 
