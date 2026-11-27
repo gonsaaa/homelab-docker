@@ -22,7 +22,7 @@ services:
 
       # Local
       - 'traefik.http.routers.anchor-home.rule=Host(`anchor.home.gonsa.org`)'
-      - 'traefik.http.routers.anchor-home.entrypoints=https'
+      - 'traefik.http.routers.anchor-home.entrypoints=https,https-tunnel'
       - 'traefik.http.routers.anchor-home.tls=true'
       - 'traefik.http.routers.anchor-home.tls.certresolver=cloudflare'
       - 'traefik.http.routers.anchor-home.service=anchor'
