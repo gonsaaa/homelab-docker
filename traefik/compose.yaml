@@ -12,7 +12,7 @@ services:
       - 443:443
       - 8443:8443 # https-tunnel Only cloudflared (10.10.20.12) Rejects every other source. Trusts the real visitor IP only from cloudflared, so CrowdSec sees real attackers
       - 9443:9443 # https-ext Internet, through the port forward (immich, jellyfin, plex…). CrowdSec. Trusts no forwarded headers, so visitors can't fake their IP
-      - 8880:8880 # Internet via port forward WAN 80 → 8080: redirect to https, serve nothing
+      - 8880:8880 # Internet via port forward WAN 80 → 8080 redirect to https, serve nothing
     environment:
         CLOUDFLARE_DNS_API_TOKEN_FILE: /run/secrets/cf_api_token
     secrets:
