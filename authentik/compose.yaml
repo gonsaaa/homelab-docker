@@ -72,7 +72,7 @@ services:
         condition: service_healthy
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.authentik.entrypoints=http,https"
+      - "traefik.http.routers.authentik.entrypoints=http,https-ext"
       - "traefik.http.routers.authentik.rule=Host(`authentik.gonsa.org`)"
       - "traefik.http.routers.authentik.tls=true"
       - "traefik.http.routers.authentik.tls.certresolver=cloudflare"
