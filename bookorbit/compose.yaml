@@ -69,7 +69,7 @@ services:
 
       # bookorbit - Local only (no auth)
       - "traefik.http.routers.bookorbit-home.rule=Host(`bookorbit.home.gonsa.org`)"
-      - "traefik.http.routers.bookorbit-home.entrypoints=https"
+      - "traefik.http.routers.bookorbit-home.entrypoints=https,https-tunnel"
       - "traefik.http.routers.bookorbit-home.tls.certresolver=cloudflare"
       - "traefik.http.routers.bookorbit-home.service=bookorbit"
       - "traefik.http.routers.bookorbit-home.middlewares=lan-only@file"
