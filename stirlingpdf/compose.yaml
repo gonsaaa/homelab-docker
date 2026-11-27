@@ -34,7 +34,7 @@ services:
       - "traefik.http.routers.pdf.tls=true"
       - "traefik.http.routers.pdf.tls.certresolver=cloudflare"
       - "traefik.http.services.pdf.loadbalancer.server.port=8080"
-      - "traefik.http.routers.pdf.middlewares=authentik@file"
+      - "traefik.http.routers.pdf.middlewares=authentik@file,geo-tunnel@file"
       
       # 🔐 Basic Auth
      # - "traefik.http.routers.pdf.middlewares=pdf-auth"
