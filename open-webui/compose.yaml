@@ -61,13 +61,13 @@ services:
 
       # OpenWebUI - External (with auth)
       - "traefik.http.routers.openwebui.rule=Host(`openwebui.gonsa.org`)"
-      - "traefik.http.routers.openwebui.entrypoints=https"
+      - "traefik.http.routers.openwebui.entrypoints=https,https-tunnel"
       - "traefik.http.routers.openwebui.tls.certresolver=cloudflare"
       - "traefik.http.routers.openwebui.middlewares=authentik@file"
 
       # Weather - External (add auth if needed)
       - "traefik.http.routers.weather.rule=Host(`weather.gonsa.org`)"
-      - "traefik.http.routers.weather.entrypoints=https"
+      - "traefik.http.routers.weather.entrypoints=https,https-tunnel"
       - "traefik.http.routers.weather.tls.certresolver=cloudflare"
       - "traefik.http.routers.weather.middlewares=authentik@file"
 
