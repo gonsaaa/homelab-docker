@@ -15,7 +15,7 @@ services:
 
       # External (with auth)
       - "traefik.http.routers.bentopdf.rule=Host(`bentopdf.gonsa.org`)"
-      - "traefik.http.routers.bentopdf.entrypoints=https,https-tunnel"
+      - "traefik.http.routers.bentopdf.entrypoints=https-tunnel"
       - "traefik.http.routers.bentopdf.tls.certresolver=cloudflare"
       - "traefik.http.routers.bentopdf.middlewares=authentik@file"
 
