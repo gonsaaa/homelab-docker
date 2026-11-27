@@ -48,7 +48,7 @@ services:
       - "traefik.enable=true"
     # Route HTTPS traffic to Plex
       - "traefik.http.routers.plex.rule=Host(`plex.gonsa.org`)"
-      - "traefik.http.routers.plex.entrypoints=https-ext"
+      - "traefik.http.routers.plex.entrypoints=https,https-ext"
       - "traefik.http.routers.plex.tls=true"
       - "traefik.http.routers.plex.tls.certresolver=cloudflare"
     # Define which internal port Plex is running on
