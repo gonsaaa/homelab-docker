@@ -37,7 +37,7 @@ services:
       - "traefik.enable=true"
 
       - "traefik.http.routers.foxy.rule=Host(`foxy.gonsa.org`)"
-      - "traefik.http.routers.foxy.entrypoints=https"
+      - "traefik.http.routers.foxy.entrypoints=https,https-tunnel"
       - "traefik.http.routers.foxy.tls=true"
       - "traefik.http.routers.foxy.tls.certresolver=cloudflare"
 
