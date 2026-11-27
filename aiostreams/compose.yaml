@@ -15,7 +15,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.aiostreams.rule=Host(`aiostreams.gonsa.org`)"
-      - "traefik.http.routers.aiostreams.entrypoints=https"
+      - "traefik.http.routers.aiostreams.entrypoints=https,https-tunnel"
       - "traefik.http.routers.aiostreams.tls.certresolver=cloudflare"
 #      # HTTP redirect to HTTPS
       - "traefik.http.routers.aiostreams-http.entrypoints=http"
