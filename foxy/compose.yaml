@@ -41,7 +41,7 @@ services:
       - "traefik.http.routers.foxy.tls=true"
       - "traefik.http.routers.foxy.tls.certresolver=cloudflare"
 
-      - "traefik.http.routers.foxy.middlewares=rate-limit@file,authentik@file"
+      - "traefik.http.routers.foxy.middlewares=geo-tunnel@file,rate-limit@file,authentik@file"
 
       - "traefik.http.services.foxy.loadbalancer.server.port=3000"
       - "traefik.http.services.foxy.loadbalancer.server.scheme=http"
