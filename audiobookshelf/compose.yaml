@@ -18,7 +18,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.audiobookshelf.rule=Host(`audiobooks.gonsa.org`)"
-      - "traefik.http.routers.audiobookshelf.entrypoints=https"
+      - "traefik.http.routers.audiobookshelf.entrypoints=https,https-tunnel"
       - "traefik.http.routers.audiobookshelf.tls=true"
       - "traefik.http.routers.audiobookshelf.tls.certresolver=cloudflare"
     # HTTP-to-HTTPS redirect
