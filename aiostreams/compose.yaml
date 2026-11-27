@@ -17,14 +17,14 @@ services:
       - "traefik.http.routers.aiostreams.rule=Host(`aiostreams.gonsa.org`)"
       - "traefik.http.routers.aiostreams.entrypoints=https-tunnel"
       - "traefik.http.routers.aiostreams.tls.certresolver=cloudflare"
+      # Shared to DE and PT on this file
+      - "traefik.http.routers.aiostreams.middlewares=geo-tunnel-shared@file"
 #      # HTTP redirect to HTTPS
       - "traefik.http.routers.aiostreams-http.entrypoints=http"
       - "traefik.http.routers.aiostreams-http.rule=Host(`aiostreams.gonsa.org`)"
       - "traefik.http.routers.aiostreams-http.middlewares=redirect-to-https"
 #       Ports
       - "traefik.http.services.aiostreams.loadbalancer.server.port=3000"
-#      # Crowdsec-bouncer and Rate-Limit
-#      - "traefik.http.routers.aiostreams.middlewares=rate-limit@file"
 
     networks:
       - traefik-net
