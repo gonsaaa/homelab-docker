@@ -17,7 +17,7 @@ services:
       - 'me.tale.headplane.target=headscale'   # required for Docker integration
       - 'traefik.enable=true'
       - 'traefik.http.routers.headscale-rtr.rule=Host(`headscale.gonsa.org`)'
-      - 'traefik.http.routers.headscale-rtr.entrypoints=https'
+      - 'traefik.http.routers.headscale-rtr.entrypoints=https-ext'
       - 'traefik.http.routers.headscale-rtr.tls.certresolver=cloudflare'
       - 'traefik.http.services.headscale-svc.loadbalancer.server.port=8080'
       - 'traefik.docker.network=traefik-net'
