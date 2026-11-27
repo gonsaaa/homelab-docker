@@ -30,7 +30,7 @@ services:
       - "traefik.docker.network=traefik-net"
         # Public domain HTTPS router (Let's Encrypt via Cloudflare)
       - "traefik.http.routers.immich.rule=Host(`immich.gonsa.org`)"
-      - "traefik.http.routers.immich.entrypoints=https"
+      - "traefik.http.routers.immich.entrypoints=https-ext"
       - "traefik.http.routers.immich.tls.certresolver=cloudflare"
       #  HTTP-to-HTTPS redirect
       - "traefik.http.routers.immich-http.entrypoints=http"
