@@ -29,7 +29,7 @@ services:
         labels:
            - "traefik.enable=true"
            - "traefik.http.routers.joplin.rule=Host(`joplin.gonsa.org`)"
-           - "traefik.http.routers.joplin.entrypoints=https,https-tunnel"
+           - "traefik.http.routers.joplin.entrypoints=https-tunnel"
            - "traefik.http.routers.joplin.tls.certresolver=cloudflare"
             
            - "traefik.http.routers.joplin-http.rule=Host(`joplin.gonsa.org`)"
