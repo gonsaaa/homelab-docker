@@ -34,7 +34,7 @@ services:
       - 'traefik.http.routers.anchor.tls=true'
       - 'traefik.http.routers.anchor.tls.certresolver=cloudflare'
       - 'traefik.http.routers.anchor.service=anchor'
-
+      - 'traefik.http.routers.anchor.middlewares=geo-tunnel@file'
       # HTTP -> HTTPS
       - 'traefik.http.routers.anchor-http.rule=Host(`anchor.gonsa.org`) || Host(`anchor.home.gonsa.org`)'
       - 'traefik.http.routers.anchor-http.entrypoints=http'
