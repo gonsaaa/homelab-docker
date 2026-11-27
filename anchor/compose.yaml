@@ -30,7 +30,7 @@ services:
 
       # External
       - 'traefik.http.routers.anchor.rule=Host(`anchor.gonsa.org`)'
-      - 'traefik.http.routers.anchor.entrypoints=https,https-tunnel'
+      - 'traefik.http.routers.anchor.entrypoints=https-tunnel'
       - 'traefik.http.routers.anchor.tls=true'
       - 'traefik.http.routers.anchor.tls.certresolver=cloudflare'
       - 'traefik.http.routers.anchor.service=anchor'
