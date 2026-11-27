@@ -22,7 +22,7 @@ services:
       - "traefik.enable=true"
     # Public domain HTTPS router (Let's Encrypt via Cloudflare)
       - "traefik.http.routers.gotify.rule=Host(`gotify.gonsa.org`)"
-      - "traefik.http.routers.gotify.entrypoints=https"
+      - "traefik.http.routers.gotify.entrypoints=https,https-tunnel"
       - "traefik.http.routers.gotify.tls.certresolver=cloudflare"
       - "traefik.http.routers.gotify-http.rule=Host(`gotify.gonsa.org`)"
       - "traefik.http.routers.gotify-http.entrypoints=http"
